@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Reetu\\Documents\\My games\\Terraria\\ModLoader\\Mod Sources\\DesertMod\\DesertMod.csproj": {}
+    "C:\\Users\\Reetu\\Documents\\My Games\\Terraria\\ModLoader\\Mod Sources\\DesertMod\\DesertMod.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Reetu\\Documents\\My games\\Terraria\\ModLoader\\Mod Sources\\DesertMod\\DesertMod.csproj": {
+    "C:\\Users\\Reetu\\Documents\\My Games\\Terraria\\ModLoader\\Mod Sources\\DesertMod\\DesertMod.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Reetu\\Documents\\My games\\Terraria\\ModLoader\\Mod Sources\\DesertMod\\DesertMod.csproj",
+        "projectUniqueName": "C:\\Users\\Reetu\\Documents\\My Games\\Terraria\\ModLoader\\Mod Sources\\DesertMod\\DesertMod.csproj",
         "projectName": "DesertMod",
-        "projectPath": "C:\\Users\\Reetu\\Documents\\My games\\Terraria\\ModLoader\\Mod Sources\\DesertMod\\DesertMod.csproj",
+        "projectPath": "C:\\Users\\Reetu\\Documents\\My Games\\Terraria\\ModLoader\\Mod Sources\\DesertMod\\DesertMod.csproj",
         "packagesPath": "C:\\Users\\Reetu\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Reetu\\Documents\\My games\\Terraria\\ModLoader\\Mod Sources\\DesertMod\\obj\\",
+        "outputPath": "C:\\Users\\Reetu\\Documents\\My Games\\Terraria\\ModLoader\\Mod Sources\\DesertMod\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

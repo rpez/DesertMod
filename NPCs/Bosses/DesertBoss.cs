@@ -11,7 +11,7 @@ namespace DesertMod.NPCs.Bosses
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ankh Amet");
+            DisplayName.SetDefault("Ankh Amet, The Cursed Sphinx");
             Main.npcFrameCount[npc.type] = 1;
         }
 
@@ -47,7 +47,34 @@ namespace DesertMod.NPCs.Bosses
 
         public override void AI()
         {
-            base.AI();
+            npc.TargetClosest(true);
+            Player player = Main.player[npc.target];
+            Vector2 target = npc.HasPlayerTarget ? player.Center : Main.npc[npc.target].Center;
+
+            // NPC initial rotation
+            npc.rotation = 0.0f;
+            npc.netAlways = true;
+            npc.TargetClosest(true);
+
+            // Prevents overheal
+            if (npc.life >= npc.lifeMax) npc.life = npc.lifeMax;
+
+            // Handles despawning
+            if (npc.target < 0 || npc.target == 255 || player.dead || !player.active)
+            {
+                npc.TargetClosest(false);
+                npc.direction = 1;
+                npc.velocity.Y -= 0.1f;
+                if (npc.timeLeft > 20)
+                {
+                    npc.timeLeft = 20;
+                    return;
+                }
+            }
+
+            int distance = (int)Vector2.Distance(target, npc.Center);
+            MoveTowards(npc, target, (float)(distance > 300 ? 13f : 7f), 30f);
+            npc.netUpdate = true;
         }
 
         public override void FindFrame(int frameHeight)
@@ -63,6 +90,23 @@ namespace DesertMod.NPCs.Bosses
         public override void BossLoot(ref string name, ref int potionType)
         {
             base.BossLoot(ref name, ref potionType);
+        }
+
+        private void MoveTowards(NPC npc, Vector2 playerTarget, float speed, float turnResistance)
+        {
+            Vector2 move = playerTarget - npc.Center;
+            float length = move.Length();
+            if (length > speed)
+            {
+                move *= speed / length;
+            }
+            move = (npc.velocity * turnResistance + move) / (turnResistance + 1f);
+            length = move.Length();
+            if (length > speed)
+            {
+                move *= speed / length;
+            }
+            npc.velocity = move;
         }
     }
 }
