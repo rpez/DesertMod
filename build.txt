@@ -1,0 +1,3 @@
+displayName = Desert Mod
+author = ReKon
+version = 0.1
