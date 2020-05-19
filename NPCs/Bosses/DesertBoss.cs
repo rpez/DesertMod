@@ -9,6 +9,10 @@ namespace DesertMod.NPCs.Bosses
     [AutoloadBossHead]
     public class DesertBoss : ModNPC
     {
+        // AI
+        private int aiPhase = 0;
+        private int attackTimer = 0;
+
         // Animation
         private int frame = 0;
         private double counting;
@@ -51,6 +55,9 @@ namespace DesertMod.NPCs.Bosses
 
         public override void AI()
         {
+            // Add "tick" to the phase counter of AI
+            aiPhase++;
+
             npc.TargetClosest(true);
             Player player = Main.player[npc.target];
             Vector2 target = npc.HasPlayerTarget ? player.Center : Main.npc[npc.target].Center;
@@ -79,6 +86,16 @@ namespace DesertMod.NPCs.Bosses
             int distance = (int)Vector2.Distance(target, npc.Center);
             MoveTowards(npc, target, (float)(distance > 300 ? 13f : 7f), 30f);
             npc.netUpdate = true;
+
+            if (aiPhase >= 100)
+            {
+                Vector2 shootPosition = npc.Center;
+                Vector2 shootVelocity = target - shootPosition;
+                shootVelocity.Normalize();
+                shootVelocity *= 10f;
+                Projectile.NewProjectile(shootPosition, shootVelocity, mod.ProjectileType("DesertBossProjectileSpiritWave"), npc.damage * 10, 5f);
+                aiPhase = 0;
+            }
         }
 
         public override void FindFrame(int frameHeight)
