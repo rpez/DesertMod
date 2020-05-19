@@ -9,10 +9,14 @@ namespace DesertMod.NPCs.Bosses
     [AutoloadBossHead]
     public class DesertBoss : ModNPC
     {
+        // Animation
+        private int frame = 0;
+        private double counting;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ankh Amet, The Cursed Sphinx");
-            Main.npcFrameCount[npc.type] = 1;
+            Main.npcFrameCount[npc.type] = 4;
         }
 
         public override void SetDefaults()
@@ -79,7 +83,30 @@ namespace DesertMod.NPCs.Bosses
 
         public override void FindFrame(int frameHeight)
         {
-            base.FindFrame(frameHeight);
+            if (frame == 0)
+            {
+                counting += 1.0;
+                if (counting < 8.0)
+                {
+                    npc.frame.Y = 0;
+                }
+                else if (counting < 16.0)
+                {
+                    npc.frame.Y = frameHeight;
+                }
+                else if (counting < 24.0)
+                {
+                    npc.frame.Y = frameHeight * 2;
+                }
+                else if (counting < 32.0)
+                {
+                    npc.frame.Y = frameHeight * 3;
+                }
+                else
+                {
+                    counting = 0.0;
+                }
+            }
         }
 
         public override void NPCLoot()
