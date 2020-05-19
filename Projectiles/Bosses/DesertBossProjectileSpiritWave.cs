@@ -30,7 +30,7 @@ namespace DesertMod.Projectiles.Bosses
             projectile.timeLeft = 500;
 
             ProjectileID.Sets.TrailCacheLength[projectile.type] = 5;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            ProjectileID.Sets.TrailingMode[projectile.type] = 1;
         }
 
         public override Color? GetAlpha(Color lightColor)
@@ -41,6 +41,7 @@ namespace DesertMod.Projectiles.Bosses
         public override void AI()
         {
             projectile.velocity.Y += projectile.ai[0];
+            Dust.NewDust(projectile.velocity, projectile.width, projectile.height, 15, projectile.velocity.X * -0.5f, projectile.velocity.Y * -0.5f);
         }
     }
 }
