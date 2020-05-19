@@ -87,12 +87,12 @@ namespace DesertMod.NPCs.Bosses
             MoveTowards(npc, target, (float)(distance > 300 ? 13f : 7f), 30f);
             npc.netUpdate = true;
 
-            if (aiPhase >= 100)
+            if (aiPhase >= 50)
             {
                 Vector2 shootPosition = npc.Center;
                 Vector2 shootVelocity = target - shootPosition;
                 shootVelocity.Normalize();
-                shootVelocity *= 10f;
+                shootVelocity *= 30f;
                 Projectile.NewProjectile(shootPosition, shootVelocity, mod.ProjectileType("DesertBossProjectileSpiritWave"), npc.damage * 10, 5f);
                 aiPhase = 0;
             }
