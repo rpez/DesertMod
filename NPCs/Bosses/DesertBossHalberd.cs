@@ -6,12 +6,13 @@ using System;
 
 namespace DesertMod.NPCs.Bosses
 {
-    public class DesertBoss : ModNPC
+    [AutoloadBossHead]
+    public class DesertBossHalberd : ModNPC
     {
         // AI
         private int aiPhase = 0;
         private int attackTimer = 0;
-        private bool halberdSummoned = false;
+        private int aiMode = 1;
 
         // Animation
         private int frame = 0;
@@ -20,7 +21,7 @@ namespace DesertMod.NPCs.Bosses
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ankh Amet, The Cursed Sphinx");
-            Main.npcFrameCount[npc.type] = 4;
+            Main.npcFrameCount[npc.type] = 1;
         }
 
         public override void SetDefaults()
@@ -83,62 +84,46 @@ namespace DesertMod.NPCs.Bosses
                 }
             }
 
-            int distance = (int)Vector2.Distance(target, npc.Center);
-            MoveTowards(npc, target, (float)(distance > 300 ? 13f : 7f), 30f);
-            npc.netUpdate = true;
-
-            if (aiPhase >= 50)
+            // Choose actions according to mode
+            switch (aiMode)
             {
-                Vector2 shootPosition = npc.Center;
-                Vector2 shootVelocity = target - shootPosition;
-                shootVelocity.Normalize();
-                shootVelocity *= 30f;
-                Projectile.NewProjectile(shootPosition, shootVelocity, mod.ProjectileType("DesertBossProjectileSpiritWave"), npc.damage * 10, 5f);
-                aiPhase = 0;
-            }
-
-            if (npc.life < npc.lifeMax / 2 && !halberdSummoned)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    NPC.SpawnOnPlayer(player.whoAmI, mod.NPCType("DesertBossHalberd"));
-                }
-                //Mod halberd = ModLoader.GetMod("DesertBossHalberd");
-                halberdSummoned = true;
-            }
-
-            if (npc.life < npc.lifeMax / 3)
-            {
-
+                case 0:
+                    break;
+                case 1:
+                    int distance = (int)Vector2.Distance(target, npc.Center);
+                    MoveTowards(npc, target, (float)(distance > 300 ? 13f : 7f), 30f);
+                    npc.netUpdate = true;
+                    break;
             }
         }
 
         public override void FindFrame(int frameHeight)
         {
-            if (frame == 0)
-            {
-                counting += 1.0;
-                if (counting < 8.0)
-                {
-                    npc.frame.Y = 0;
-                }
-                else if (counting < 16.0)
-                {
-                    npc.frame.Y = frameHeight;
-                }
-                else if (counting < 24.0)
-                {
-                    npc.frame.Y = frameHeight * 2;
-                }
-                else if (counting < 32.0)
-                {
-                    npc.frame.Y = frameHeight * 3;
-                }
-                else
-                {
-                    counting = 0.0;
-                }
-            }
+            base.FindFrame(frameHeight);
+            //if (frame == 0)
+            //{
+            //    counting += 1.0;
+            //    if (counting < 8.0)
+            //    {
+            //        npc.frame.Y = 0;
+            //    }
+            //    else if (counting < 16.0)
+            //    {
+            //        npc.frame.Y = frameHeight;
+            //    }
+            //    else if (counting < 24.0)
+            //    {
+            //        npc.frame.Y = frameHeight * 2;
+            //    }
+            //    else if (counting < 32.0)
+            //    {
+            //        npc.frame.Y = frameHeight * 3;
+            //    }
+            //    else
+            //    {
+            //        counting = 0.0;
+            //    }
+            //}
         }
 
         public override void NPCLoot()
@@ -166,6 +151,11 @@ namespace DesertMod.NPCs.Bosses
                 move *= speed / length;
             }
             npc.velocity = move;
+        }
+
+        public void SetMode(int mode)
+        {
+            aiMode = mode;
         }
     }
 }
