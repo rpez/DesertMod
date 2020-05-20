@@ -17,8 +17,8 @@ namespace DesertMod
 
         public override TagCompound Save()
         {
-            var Downed = new List<string>();
-            if (DesertBossDowned) Downed.Add("desertBoss");
+            var downed = new List<string>();
+            if (DesertBossDowned) downed.Add("desertBoss");
 
             return new TagCompound
             {
@@ -26,9 +26,36 @@ namespace DesertMod
                     "Version", 0
                 },
                 {
-                    "Downed", Downed
+                    "Downed", downed
                 }
             };
         }
+
+        public override void Load(TagCompound tag)
+        {
+            var downed = tag.GetList<string>("Downed");
+            DesertBossDowned = downed.Contains("desertBoss");
+        }
+
+        public override void LoadLegacy(BinaryReader reader)
+        {
+            int loadVersion = reader.ReadInt32();
+            if (loadVersion == 0)
+            {
+                BitsByte flags = reader.ReadByte();
+                DesertBossDowned = flags[0];
+            }
+        }
+
+        public override void NetSend(BinaryWriter writer)
+        {
+            BitsByte flags = new BitsByte();
+            flags[0] = DesertBossDowned;
+        }
+
+        public override void NetReceive(BinaryReader reader)
+        {
+            BitsByte flags = reader.ReadByte();
+            DesertBossDowned = flags[0];
+        }
     }
-}
