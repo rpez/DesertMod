@@ -34,7 +34,7 @@ namespace DesertMod.Items.Boss
 
 		public override bool CanUseItem(Player player)
 		{
-			return player.ZoneDesert;
+			return true; //player.ZoneDesert;
 		}
 
 		public override bool UseItem(Player player)
