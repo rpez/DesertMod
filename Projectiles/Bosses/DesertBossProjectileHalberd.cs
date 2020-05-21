@@ -7,6 +7,8 @@ namespace DesertMod.Projectiles.Bosses
 {
     class DesertBossProjectileHalberd : ModProjectile
     {
+        private int aiPhase = 0;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ancient Blade");
@@ -16,7 +18,7 @@ namespace DesertMod.Projectiles.Bosses
         {
             projectile.width = 18;
             projectile.height = 42;
-            projectile.scale = 1.2f;
+            projectile.scale = 1.0f;
 
             projectile.aiStyle = 1;
             aiType = ProjectileID.Bullet;
@@ -40,9 +42,16 @@ namespace DesertMod.Projectiles.Bosses
 
         public override void AI()
         {
-            projectile.velocity.Y += projectile.ai[0];
+            aiPhase++;
+            projectile.rotation += 0.4f * (float)projectile.direction;
+
+            if (aiPhase > 100)
+            {
+                
+            }
+
             Dust.NewDust(projectile.position, projectile.width, projectile.height, 217,
-                projectile.velocity.X * 0.25f, projectile.velocity.Y * 0.25f, 150, default(Color), 0.7f);
+                projectile.velocity.X * 0.25f, projectile.velocity.Y * 0.25f, 150, default(Color), 1f);
             Lighting.AddLight(projectile.Center, 0.3f, 1f, 1f);
         }
     }

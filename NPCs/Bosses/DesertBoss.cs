@@ -16,6 +16,10 @@ namespace DesertMod.NPCs.Bosses
         private int frame = 0;
         private double counting;
 
+        // Stats
+        private int daggerDamage = 1;
+        private int halberdDamage = 10;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Cursed Sphinx");
@@ -91,11 +95,18 @@ namespace DesertMod.NPCs.Bosses
                 Vector2 shootVelocity = target - shootPosition;
                 shootVelocity.Normalize();
                 shootVelocity *= 30f;
-                Projectile.NewProjectile(shootPosition, shootVelocity, mod.ProjectileType("DesertBossProjectileSpiritDagger"), npc.damage * 10, 5f);
+                Projectile.NewProjectile(shootPosition, shootVelocity, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 5f);
+                for (int i = 1; i < 5; i++)
+                {
+                    Vector2 dir = shootVelocity;
+                    dir.Normalize();
+                    Vector2 pos = shootPosition - dir * 15f * i;
+                    int projID = Projectile.NewProjectile(pos, shootVelocity, mod.ProjectileType("DesertBossProjectileSpiritDagger"), 0, 0f);
+                }
 
                 if (npc.life < npc.lifeMax / 2)
                 {
-                    Projectile.NewProjectile(shootPosition, shootVelocity, mod.ProjectileType("DesertBossProjectileHalberd"), npc.damage * 10, 5f);
+                    Projectile.NewProjectile(shootPosition, shootVelocity, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 5f);
                 }
 
                 aiPhase = 0;

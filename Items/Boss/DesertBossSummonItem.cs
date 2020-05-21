@@ -45,7 +45,7 @@ namespace DesertMod.Items.Boss
 			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
 				NPC.SpawnOnPlayer(player.whoAmI, mod.NPCType("DesertBoss"));
-				Main.PlaySound(mod.GetLegacySoundSlot((SoundType) 50, "Sounds/Boss/DesertBossMusic"), player.position);
+				Main.PlaySound(mod.GetLegacySoundSlot((SoundType)50, "Sounds/Boss/DesertBossMusic"), player.position);
 			}
 			return true;
 		}
