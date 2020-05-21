@@ -11,7 +11,6 @@ namespace DesertMod.NPCs.Bosses
         // AI
         private int aiPhase = 0;
         private int attackTimer = 0;
-        private bool halberdSummoned = false;
 
         // Animation
         private int frame = 0;
@@ -19,7 +18,7 @@ namespace DesertMod.NPCs.Bosses
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ankh Amet, The Cursed Sphinx");
+            DisplayName.SetDefault("Cursed Sphinx");
             Main.npcFrameCount[npc.type] = 4;
         }
 
@@ -92,23 +91,14 @@ namespace DesertMod.NPCs.Bosses
                 Vector2 shootVelocity = target - shootPosition;
                 shootVelocity.Normalize();
                 shootVelocity *= 30f;
-                Projectile.NewProjectile(shootPosition, shootVelocity, mod.ProjectileType("DesertBossProjectileSpiritWave"), npc.damage * 10, 5f);
-                aiPhase = 0;
-            }
+                Projectile.NewProjectile(shootPosition, shootVelocity, mod.ProjectileType("DesertBossProjectileSpiritDagger"), npc.damage * 10, 5f);
 
-            if (npc.life < npc.lifeMax / 2 && !halberdSummoned)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                if (npc.life < npc.lifeMax / 2)
                 {
-                    NPC.SpawnOnPlayer(player.whoAmI, mod.NPCType("DesertBossHalberd"));
+                    Projectile.NewProjectile(shootPosition, shootVelocity, mod.ProjectileType("DesertBossProjectileHalberd"), npc.damage * 10, 5f);
                 }
-                //Mod halberd = ModLoader.GetMod("DesertBossHalberd");
-                halberdSummoned = true;
-            }
 
-            if (npc.life < npc.lifeMax / 3)
-            {
-
+                aiPhase = 0;
             }
         }
 
