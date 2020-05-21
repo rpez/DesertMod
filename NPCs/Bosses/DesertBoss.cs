@@ -41,7 +41,6 @@ namespace DesertMod.NPCs.Bosses
 
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
-            music = MusicID.Boss1;
 
             //bossBag = mod.ItemType("DesertBossTreasureBag");
         }

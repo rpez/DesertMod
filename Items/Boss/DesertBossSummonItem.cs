@@ -17,10 +17,12 @@ namespace DesertMod.Items.Boss
 			item.width = 26;
 			item.height = 26;
 			item.maxStack = 20;
+
 			item.rare = ItemRarityID.Blue;
+			item.consumable = true;
+
 			item.useAnimation = 45;
 			item.useStyle = ItemUseStyleID.HoldingUp;
-			item.consumable = true;
 		}
 
 		public override void AddRecipes() 
@@ -43,6 +45,7 @@ namespace DesertMod.Items.Boss
 			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
 				NPC.SpawnOnPlayer(player.whoAmI, mod.NPCType("DesertBoss"));
+				Main.PlaySound(mod.GetLegacySoundSlot((SoundType) 50, "Sounds/Boss/DesertBossMusic"), player.position);
 			}
 			return true;
 		}
