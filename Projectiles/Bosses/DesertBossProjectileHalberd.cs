@@ -16,8 +16,8 @@ namespace DesertMod.Projectiles.Bosses
 
         public override void SetDefaults()
         {
-            projectile.width = 18;
-            projectile.height = 42;
+            projectile.width = 76;
+            projectile.height = 398;
             projectile.scale = 1.0f;
 
             projectile.aiStyle = 1;
@@ -43,7 +43,7 @@ namespace DesertMod.Projectiles.Bosses
         public override void AI()
         {
             aiPhase++;
-            projectile.rotation += 0.4f * (float)projectile.direction;
+            projectile.rotation = (float)aiPhase;
 
             if (aiPhase > 100)
             {
