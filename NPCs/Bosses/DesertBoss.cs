@@ -36,7 +36,7 @@ namespace DesertMod.NPCs.Bosses
             npc.boss = true;
             npc.aiStyle = -1;
 
-            npc.lifeMax = 100;
+            npc.lifeMax = 1000;
             npc.damage = 10;
             npc.defense = 10;
             npc.knockBackResist = 0f;
@@ -87,10 +87,6 @@ namespace DesertMod.NPCs.Bosses
                 }
             }
 
-            int distance = (int)Vector2.Distance(target, npc.Center);
-            MoveTowards(npc, target, (float)(distance > 300 ? 13f : 7f), 30f);
-            npc.netUpdate = true;
-
             // Battle phases
             Vector2 bossCenter = npc.Center;
             Vector2 towardsPlayer = target - bossCenter;
@@ -99,6 +95,12 @@ namespace DesertMod.NPCs.Bosses
             // When healthy
             if (npc.life >= npc.lifeMax / 2)
             {
+                // Movement
+                int distance = (int)Vector2.Distance(target, npc.Center);
+                MoveTowards(npc, target - towardsPlayer * 300f, (float)(distance > 300 ? 13f : 7f), 30f);
+                npc.netUpdate = true;
+
+                // Dagger attack
                 if (aiPhase >= 50)
                 {
                     // The actual projectile

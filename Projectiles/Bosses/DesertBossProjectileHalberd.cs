@@ -37,8 +37,6 @@ namespace DesertMod.Projectiles.Bosses
 
             ProjectileID.Sets.TrailCacheLength[projectile.type] = 5;
             ProjectileID.Sets.TrailingMode[projectile.type] = 2;
-
-            halberdRotation = projectile.rotation;
         }
 
         public override Color? GetAlpha(Color lightColor)
@@ -55,6 +53,8 @@ namespace DesertMod.Projectiles.Bosses
         {
             aiPhase++;
 
+            projectile.rotation = halberdRotation;
+
             if (aiPhase <= 50)
             {
                 projectile.velocity *= 0.95f;
@@ -62,9 +62,8 @@ namespace DesertMod.Projectiles.Bosses
 
             else if (aiPhase > 50)
             {
-                projectile.velocity *= 1.05f;
+                if (projectile.velocity.Length() <= 30f) projectile.velocity *= 1.05f;
                 halberdRotation += rotationSpeed;
-                projectile.rotation = halberdRotation;
                 //Dust.NewDust(projectile.position, projectile.width, projectile.height, 217,
                 //    projectile.velocity.X * 0.25f, projectile.velocity.Y * 0.25f, 150, default(Color), 1f);
                 //Lighting.AddLight(projectile.Center, 0.3f, 1f, 1f);
