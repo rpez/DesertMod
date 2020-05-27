@@ -18,7 +18,9 @@ namespace DesertMod.NPCs.Bosses
 
         // Stats
         private int daggerDamage = 1;
+        private float daggerSpeed = 25f;
         private int halberdDamage = 10;
+        private float halberdSpeed = 20f;
 
         public override void SetStaticDefaults()
         {
@@ -89,27 +91,40 @@ namespace DesertMod.NPCs.Bosses
             MoveTowards(npc, target, (float)(distance > 300 ? 13f : 7f), 30f);
             npc.netUpdate = true;
 
-            if (aiPhase >= 50)
+            // Battle phases
+            Vector2 bossCenter = npc.Center;
+            Vector2 towardsPlayer = target - bossCenter;
+            towardsPlayer.Normalize();
+
+            // When healthy
+            if (npc.life >= npc.lifeMax / 2)
             {
-                Vector2 shootPosition = npc.Center;
-                Vector2 shootVelocity = target - shootPosition;
-                shootVelocity.Normalize();
-                shootVelocity *= 30f;
-                Projectile.NewProjectile(shootPosition, shootVelocity, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 5f);
-                for (int i = 1; i < 5; i++)
+                if (aiPhase >= 50)
                 {
-                    Vector2 dir = shootVelocity;
-                    dir.Normalize();
-                    Vector2 pos = shootPosition - dir * 15f * i;
-                    int projID = Projectile.NewProjectile(pos, shootVelocity, mod.ProjectileType("DesertBossProjectileSpiritDagger"), 0, 0f);
-                }
+                    // The actual projectile
+                    Projectile.NewProjectile(bossCenter, towardsPlayer * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 5f);
+                    
+                    // Workaround ghosting trail
+                    for (int i = 1; i < 5; i++)
+                    {
+                        Vector2 dir = towardsPlayer;
+                        dir.Normalize();
+                        Vector2 pos = bossCenter - dir * 15f * i;
+                        Projectile.NewProjectile(pos, towardsPlayer * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), 0, 0f);
+                    }
 
-                if (npc.life < npc.lifeMax / 2)
+                    aiPhase = 0;
+                }
+            }
+
+            // Below half HP
+            else if (npc.life < npc.lifeMax / 2)
+            {
+                if (aiPhase >= 300)
                 {
-                    Projectile.NewProjectile(shootPosition, shootVelocity, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 5f);
+                    Projectile.NewProjectile(bossCenter, towardsPlayer * halberdSpeed, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 5f);
+                    aiPhase = 0;
                 }
-
-                aiPhase = 0;
             }
         }
 
