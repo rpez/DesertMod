@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace DesertMod.Projectiles.Bosses
 {
@@ -10,7 +11,7 @@ namespace DesertMod.Projectiles.Bosses
         private int aiPhase = 0;
 
         private float halberdRotation;
-        private float rotationSpeed = -0.2f;
+        private float rotationSpeed = -1f;
         private float alpha = 0.0f;
 
         public override void SetStaticDefaults()
@@ -51,23 +52,35 @@ namespace DesertMod.Projectiles.Bosses
 
         public override void AI()
         {
-            aiPhase++;
+            NPC npc = Main.npc[projectile.owner];
 
-            projectile.rotation = halberdRotation;
+            // Factors for calculations
+            double deg = halberdRotation; // The degrees
+            double rad = deg * (Math.PI / 180); // Convert degrees to radians
+            double dist = 200; // Distance away from the npc
 
-            if (aiPhase <= 50)
-            {
-                projectile.velocity *= 0.95f;
-            }
+            projectile.position.X = npc.Center.X - (int)(Math.Cos(rad) * dist) - projectile.width / 2;
+            projectile.position.Y = npc.Center.Y - (int)(Math.Sin(rad) * dist) - projectile.height / 2;
 
-            else if (aiPhase > 50)
-            {
-                if (projectile.velocity.Length() <= 30f) projectile.velocity *= 1.05f;
-                halberdRotation += rotationSpeed;
-                //Dust.NewDust(projectile.position, projectile.width, projectile.height, 217,
-                //    projectile.velocity.X * 0.25f, projectile.velocity.Y * 0.25f, 150, default(Color), 1f);
-                //Lighting.AddLight(projectile.Center, 0.3f, 1f, 1f);
-            }
+            halberdRotation += rotationSpeed;
+
+            //aiPhase++;
+
+            //projectile.rotation = halberdRotation;
+
+            //if (aiPhase <= 50)
+            //{
+            //    projectile.velocity *= 0.95f;
+            //}
+
+            //else if (aiPhase > 50)
+            //{
+            //    if (projectile.velocity.Length() <= 30f) projectile.velocity *= 1.05f;
+            //    halberdRotation += rotationSpeed;
+            //    //Dust.NewDust(projectile.position, projectile.width, projectile.height, 217,
+            //    //    projectile.velocity.X * 0.25f, projectile.velocity.Y * 0.25f, 150, default(Color), 1f);
+            //    //Lighting.AddLight(projectile.Center, 0.3f, 1f, 1f);
+            //}
         }
     }
 }
