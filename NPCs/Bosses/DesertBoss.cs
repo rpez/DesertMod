@@ -104,7 +104,7 @@ namespace DesertMod.NPCs.Bosses
                 if (aiPhase >= 50)
                 {
                     // The actual projectile
-                    Projectile.NewProjectile(bossCenter, towardsPlayer * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 5f);
+                    Projectile.NewProjectile(bossCenter, towardsPlayer * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 5f, npc.whoAmI);
                     
                     // Workaround ghosting trail
                     for (int i = 1; i < 5; i++)
@@ -122,11 +122,11 @@ namespace DesertMod.NPCs.Bosses
             // Below half HP
             else if (npc.life < npc.lifeMax / 2)
             {
+                npc.velocity = Vector2.Zero;
                 if (aiPhase >= 300)
                 {
-                    npc.velocity = Vector2.Zero;
                     //Projectile.NewProjectile(bossCenter, towardsPlayer * halberdSpeed, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 5f);
-                    Projectile.NewProjectile(bossCenter - new Vector2(-100f, 0f), Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 5f, npc.whoAmI);
+                    Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, npc.whoAmI);
                     aiPhase = 0;
                 }
             }

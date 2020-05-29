@@ -21,50 +21,46 @@ namespace DesertMod.Projectiles.Bosses
 
         public override void SetDefaults()
         {
-            projectile.width = 76;
-            projectile.height = 398;
+            projectile.width = 398;
+            projectile.height = 76;
             projectile.scale = 1.0f;
 
-            projectile.aiStyle = 1;
-            aiType = ProjectileID.Bullet;
+            projectile.aiStyle = -1;
 
             projectile.friendly = false;
             projectile.hostile = true;
             projectile.ignoreWater = true;
-            projectile.penetrate = 1;
             projectile.tileCollide = false;
 
             projectile.timeLeft = 500;
-
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 5;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 2;
         }
 
         public override Color? GetAlpha(Color lightColor)
         {
-            if (aiPhase <= 50)
-            {
-                alpha += 0.02f;
-                return new Color(alpha, alpha, alpha, alpha);
-            }
-            else return Color.White;
+            //if (aiPhase <= 50)
+            //{
+            //    alpha += 0.02f;
+            //    return new Color(alpha, alpha, alpha, alpha);
+            //}
+            //else 
+            return Color.White;
         }
 
         public override void AI()
         {
-            NPC npc = Main.npc[projectile.owner];
+            NPC npc = Main.npc[(int)projectile.knockBack];
 
             // Factors for calculations
             double deg = halberdRotation; // The degrees
             double rad = deg * (Math.PI / 180); // Convert degrees to radians
             double dist = 200; // Distance away from the npc
 
-            projectile.position.X = npc.Center.X - (int)(Math.Cos(rad) * dist) - projectile.width / 2;
-            projectile.position.Y = npc.Center.Y - (int)(Math.Sin(rad) * dist) - projectile.height / 2;
+            projectile.position.X = npc.Center.X - (int)(Math.Cos(rad) * dist);
+            projectile.position.Y = npc.Center.Y - (int)(Math.Sin(rad) * dist);
 
             halberdRotation += rotationSpeed;
 
-            //aiPhase++;
+            aiPhase++;
 
             //projectile.rotation = halberdRotation;
 
