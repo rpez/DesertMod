@@ -10,13 +10,27 @@ namespace DesertMod.Projectiles.Bosses
     {
         private int aiPhase = 0;
 
-        // Halberd movement variables
+        // Halberd state values
         private float halberdRotation;
-        private float rotationSpeed = -1f;
-        private float offset = 180f;
-
         private float alpha = 0.0f;
 
+        private NPC npc;
+        private float windupRadians;
+        private float swingRadians;
+
+        // Halberd movement variables
+        private float windupSpeed = 1f;
+        private float windupAcceleration = 0f;
+        private float windupDeceleration = 0f;
+        private float windupAngle = 90f;
+
+        private float swingSpeed = -10f;
+        private float swingAcceleration = 0f;
+        private float swingDeceleration = 0f;
+        private float swingAngle = 270f;
+
+        private float distanceFromCenter = 150f;
+        private float swingRotationOffset = 0f;
 
         public override void SetStaticDefaults()
         {
@@ -36,7 +50,7 @@ namespace DesertMod.Projectiles.Bosses
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
 
-            projectile.timeLeft = 500;
+            projectile.timeLeft = 150;
         }
 
         public override Color? GetAlpha(Color lightColor)
@@ -51,28 +65,46 @@ namespace DesertMod.Projectiles.Bosses
 
         public override void AI()
         {
-            bool start = aiPhase == 0;
+            if (aiPhase == 0) CalculateValues();
 
-            // The boss itself
-            NPC npc = Main.npc[(int)projectile.ai[0]];
+            double rad = halberdRotation * (Math.PI / 180);
 
-            // Factors for calculations
-            double deg = halberdRotation; // The degrees
-            double rad = deg * (Math.PI / 180); // Convert degrees to radians
-            double dist = 200; // Distance away from the npc
+            if (aiPhase < 50)
+            {
+                // Rotate around boss
+                projectile.position.X = npc.Center.X - (int)(Math.Cos(rad) * distanceFromCenter) - projectile.width / 2;
+                projectile.position.Y = npc.Center.Y - (int)(Math.Sin(rad) * distanceFromCenter) - projectile.height / 2;
 
-            // Rotate around boss
-            projectile.position.X = npc.Center.X - (int)(Math.Cos(rad) * dist) - projectile.width / 2;
-            projectile.position.Y = npc.Center.Y - (int)(Math.Sin(rad) * dist) - projectile.height / 2;
+                // Rotate projectile sprite
+                Vector2 bossToProjectile = projectile.Center - npc.Center;
+                bossToProjectile.Normalize();
+                projectile.rotation = -(float)(Math.Atan2(-bossToProjectile.Y, bossToProjectile.X) + Math.PI);
 
-            // Rotate projectile sprite
-            Vector2 bossToProjectile = projectile.Center - npc.Center;
-            bossToProjectile.Normalize();
-            projectile.rotation = -(float)(Math.Atan2(-bossToProjectile.Y, bossToProjectile.X) + Math.PI);
+                halberdRotation += windupSpeed;
+            }
 
-            halberdRotation += rotationSpeed;
+            if (aiPhase > 50)
+            {
+                // Rotate around boss
+                projectile.position.X = npc.Center.X - (int)(Math.Cos(rad) * distanceFromCenter) - projectile.width / 2;
+                projectile.position.Y = npc.Center.Y - (int)(Math.Sin(rad) * distanceFromCenter) - projectile.height / 2;
+
+                // Rotate projectile sprite
+                Vector2 bossToProjectile = projectile.Center - npc.Center;
+                bossToProjectile.Normalize();
+                projectile.rotation = -(float)(Math.Atan2(-bossToProjectile.Y, bossToProjectile.X) + Math.PI);
+
+                halberdRotation += swingSpeed;
+            }
 
             aiPhase++;
+        }
+
+        private void CalculateValues()
+        {
+            npc = Main.npc[(int)projectile.ai[0]];
+            windupRadians = windupAngle * 180f / (float)Math.PI;
+            swingRadians = swingAngle * 180f / (float)Math.PI;
         }
     }
 }

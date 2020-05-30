@@ -107,7 +107,7 @@ namespace DesertMod.NPCs.Bosses
                     // The actual projectile
                     Projectile.NewProjectile(bossCenter, towardsPlayer * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 0f);
                     
-                    // Workaround ghosting trail
+                    // Workaround ghosting trail TODO: implement better method for this
                     for (int i = 1; i < 5; i++)
                     {
                         Vector2 dir = towardsPlayer;
