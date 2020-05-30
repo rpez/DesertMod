@@ -6,6 +6,7 @@ using System;
 
 namespace DesertMod.NPCs.Bosses
 {
+    [AutoloadBossHead]
     public class DesertBoss : ModNPC
     {
         // AI
@@ -104,7 +105,7 @@ namespace DesertMod.NPCs.Bosses
                 if (aiPhase >= 50)
                 {
                     // The actual projectile
-                    Projectile.NewProjectile(bossCenter, towardsPlayer * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 5f, npc.whoAmI);
+                    Projectile.NewProjectile(bossCenter, towardsPlayer * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 0f);
                     
                     // Workaround ghosting trail
                     for (int i = 1; i < 5; i++)
@@ -126,7 +127,9 @@ namespace DesertMod.NPCs.Bosses
                 if (aiPhase >= 300)
                 {
                     //Projectile.NewProjectile(bossCenter, towardsPlayer * halberdSpeed, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 5f);
-                    Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, npc.whoAmI);
+                    int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 0f);
+                    Main.projectile[pro].ai[0] = npc.whoAmI;
+                    //NPC.NewNPC((int) bossCenter.X, (int) bossCenter.Y, mod.NPCType("Halberd"));
                     aiPhase = 0;
                 }
             }
