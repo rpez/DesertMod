@@ -9,6 +9,7 @@ namespace DesertMod.Projectiles.Bosses
     class DesertBossProjectileHalberd : ModProjectile
     {
         private int aiPhase = 0;
+        private int aiUpdatesPerSecond = 60;
 
         // Halberd state values
         private float halberdRotation;
@@ -17,6 +18,8 @@ namespace DesertMod.Projectiles.Bosses
         private NPC npc;
         private float windupRadians;
         private float swingRadians;
+        private int windupWindow;
+        private int swingWindow;
 
         // Halberd movement variables
         private float windupSpeed = 1f;
@@ -24,7 +27,7 @@ namespace DesertMod.Projectiles.Bosses
         private float windupDeceleration = 0f;
         private float windupAngle = 90f;
 
-        private float swingSpeed = -10f;
+        private float swingSpeed = -15f;
         private float swingAcceleration = 0f;
         private float swingDeceleration = 0f;
         private float swingAngle = 270f;
@@ -50,7 +53,7 @@ namespace DesertMod.Projectiles.Bosses
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
 
-            projectile.timeLeft = 150;
+            projectile.timeLeft = 1000;
         }
 
         public override Color? GetAlpha(Color lightColor)
@@ -69,7 +72,7 @@ namespace DesertMod.Projectiles.Bosses
 
             double rad = halberdRotation * (Math.PI / 180);
 
-            if (aiPhase < 50)
+            if (aiPhase < windupWindow)
             {
                 // Rotate around boss
                 projectile.position.X = npc.Center.X - (int)(Math.Cos(rad) * distanceFromCenter) - projectile.width / 2;
@@ -83,7 +86,7 @@ namespace DesertMod.Projectiles.Bosses
                 halberdRotation += windupSpeed;
             }
 
-            if (aiPhase > 50)
+            if (aiPhase > windupWindow)
             {
                 // Rotate around boss
                 projectile.position.X = npc.Center.X - (int)(Math.Cos(rad) * distanceFromCenter) - projectile.width / 2;
@@ -97,6 +100,11 @@ namespace DesertMod.Projectiles.Bosses
                 halberdRotation += swingSpeed;
             }
 
+            if (aiPhase > windupWindow + swingWindow)
+            {
+                projectile.timeLeft = 0;
+            }
+
             aiPhase++;
         }
 
@@ -105,6 +113,8 @@ namespace DesertMod.Projectiles.Bosses
             npc = Main.npc[(int)projectile.ai[0]];
             windupRadians = windupAngle * 180f / (float)Math.PI;
             swingRadians = swingAngle * 180f / (float)Math.PI;
+            windupWindow = (int) (windupAngle / Math.Abs(windupSpeed));
+            swingWindow = (int) (swingAngle / Math.Abs(swingSpeed));
         }
     }
 }
