@@ -13,13 +13,14 @@ namespace DesertMod.Projectiles.Bosses
 
         // Halberd state values
         private float halberdRotation;
+        private float halberdRotationOffset;
         private float alpha = 0.0f;
 
         private NPC npc;
         private int[] windupWindow = new int[3];
         private int[] swingWindow = new int[3];
         private float currentSpeed = 0f;
-        private int rotationOffsetIncrement;
+        private float rotationOffsetIncrement;
 
         // Halberd movement variables
         private float windupSpeed = 2f;
@@ -33,7 +34,7 @@ namespace DesertMod.Projectiles.Bosses
         private float constantSwingSpeedDistance = 90f;
 
         private float distanceFromCenter = 150f;
-        private float swingRotationOffset = 90f;
+        private float swingRotationOffset = 45f;
 
         public override void SetStaticDefaults()
         {
@@ -79,7 +80,7 @@ namespace DesertMod.Projectiles.Bosses
             // Rotate projectile sprite
             Vector2 bossToProjectile = projectile.Center - npc.Center;
             bossToProjectile.Normalize();
-            projectile.rotation = -(float)(Math.Atan2(-bossToProjectile.Y, bossToProjectile.X) + Math.PI);
+            projectile.rotation = -(float)(Math.Atan2(-bossToProjectile.Y, bossToProjectile.X) + Math.PI + halberdRotationOffset / 180f * Math.PI);
 
             // Modify speed depending on movement values
             if (aiPhase < windupWindow[0])
@@ -103,7 +104,8 @@ namespace DesertMod.Projectiles.Bosses
             }
             else if (aiPhase < swingWindow[1])
             {
-                halberdRotation += swingSpeed + rotationOffsetIncrement;
+                halberdRotation += swingSpeed;
+                halberdRotationOffset += rotationOffsetIncrement;
             }
             else if (aiPhase < swingWindow[2])
             {
@@ -125,14 +127,14 @@ namespace DesertMod.Projectiles.Bosses
 
             GetWindow(windupWindow, windupSpeed, windupAcceleration, windupDeceleration, constantWindupSpeedDistance);
             GetWindow(swingWindow, swingSpeed, swingAcceleration, swingDeceleration, constantSwingSpeedDistance, windupWindow[2]);
-            rotationOffsetIncrement = rotationOffsetIncrement / swingWindow[1];
+            rotationOffsetIncrement = swingRotationOffset / (swingWindow[1] - swingWindow[0]);
         }
 
         private void GetWindow(int[] window, float speed, float acceleration, float deceleration, float constDistance, int offset = 0)
         {
-            float windupAccelerationTime = (speed / acceleration);
-            float windupDecelerationTime = (speed / deceleration);
-            float constantSpeedTime = (int)(constDistance / Math.Abs(speed));
+            float windupAccelerationTime = speed / acceleration;
+            float windupDecelerationTime = speed / deceleration;
+            float constantSpeedTime = constDistance / Math.Abs(speed);
             window[0] = offset + (int)windupAccelerationTime;
             window[1] = window[0] + (int)constantSpeedTime;
             window[2] = window[1] + (int)windupDecelerationTime;

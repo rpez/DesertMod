@@ -31,8 +31,8 @@ namespace DesertMod.NPCs.Bosses
 
         public override void SetDefaults()
         {
-            npc.width = 64;
-            npc.height = 64;
+            npc.width = 202;
+            npc.height = 254;
 
             npc.boss = true;
             npc.aiStyle = -1;
