@@ -8,33 +8,42 @@ namespace DesertMod.Projectiles.Bosses
 {
     class DesertBossProjectileHalberd : ModProjectile
     {
-        private int aiPhase = 0;
-        private int aiUpdatesPerSecond = 60;
-
         // Halberd state values
+        private int aiPhase = 0;
         private float halberdRotation;
         private float halberdRotationOffset;
         private float alpha = 0.0f;
 
+        // Initialized in the code
         private NPC npc;
         private int[] windupWindow = new int[3];
         private int[] swingWindow = new int[3];
         private float currentSpeed = 0f;
         private float rotationOffsetIncrement;
+        private int fadeOutThreshold;
+        private float fadeIncrement;
 
-        // Halberd movement variables
+        /* 
+         * ATTACK ANIMATION VARIABLES (Modify these to alter the movement of the attack)
+         * Both the windup and the swing part of the attack have 3 stages: Acceleration, Constant Speed and Deceleration
+         * First the acceleration will be applied until the speed is reached, after which the constant speed is applied
+         * as long as it takes to reach the constantSpeedDistance. Lastly, the deceleration is applied until speed is 0.
+         */
+        private bool leftToRight = true; // In which directiopn the attack will go
+
         private float windupSpeed = 2f;
         private float windupAcceleration = 0.1f;
         private float windupDeceleration = 0.02f;
         private float constantWindupSpeedDistance = 20f;
 
-        private float swingSpeed = -15f;
-        private float swingAcceleration = -1f;
-        private float swingDeceleration = -1f;
+        private float swingSpeed = 20f;
+        private float swingAcceleration = 1f;
+        private float swingDeceleration = 1f;
         private float constantSwingSpeedDistance = 90f;
 
-        private float distanceFromCenter = 150f;
-        private float swingRotationOffset = 45f;
+        private float distanceFromCenter = 150f; // How far the projectile is from the npc
+        private float swingRotationOffset = 45f; // How much the blade will tilt during the swing
+        private int fadeTime = 50; // How much time the fade in and fade out will take
 
         public override void SetStaticDefaults()
         {
@@ -59,9 +68,15 @@ namespace DesertMod.Projectiles.Bosses
 
         public override Color? GetAlpha(Color lightColor)
         {
-            if (aiPhase <= 50)
+            // Fade in for the projectile
+            if (aiPhase <= fadeTime)
             {
-                alpha += 0.02f;
+                alpha += fadeIncrement;
+                return new Color(alpha, alpha, alpha, alpha);
+            }
+            else if (aiPhase > fadeOutThreshold && aiPhase < fadeOutThreshold + fadeTime)
+            {
+                alpha -= fadeIncrement;
                 return new Color(alpha, alpha, alpha, alpha);
             }
             else return Color.White;
@@ -83,6 +98,7 @@ namespace DesertMod.Projectiles.Bosses
             projectile.rotation = -(float)(Math.Atan2(-bossToProjectile.Y, bossToProjectile.X) + Math.PI + halberdRotationOffset / 180f * Math.PI);
 
             // Modify speed depending on movement values
+            // windupWindow and swingWindow include the different aiPhase thresholds for the attack phases respectively
             if (aiPhase < windupWindow[0])
             {
                 currentSpeed += windupAcceleration;
@@ -112,24 +128,40 @@ namespace DesertMod.Projectiles.Bosses
                 currentSpeed -= swingDeceleration;
                 halberdRotation += currentSpeed;
             }
+            else if (aiPhase < fadeOutThreshold + fadeTime)
+            {
+                // Empty for fade out purposes, possibly implement other effects later
+            }
             else
             {
                 projectile.timeLeft = 0;
-            } 
+            }
 
             // Add tick to ai phase
             aiPhase++;
         }
 
+        // Initializes one-time calculated values
         private void InitializeValues()
         {
             npc = Main.npc[(int)projectile.ai[0]];
 
+            windupSpeed = leftToRight ? windupSpeed : -windupSpeed;
+            windupAcceleration = leftToRight ? windupAcceleration : -windupAcceleration;
+            windupDeceleration = leftToRight ? windupDeceleration : -windupDeceleration;
+
+            swingSpeed = leftToRight ? -swingSpeed : windupSpeed;
+            swingAcceleration = leftToRight ? -swingAcceleration : swingAcceleration;
+            swingDeceleration = leftToRight ? -swingDeceleration : swingDeceleration;
+
             GetWindow(windupWindow, windupSpeed, windupAcceleration, windupDeceleration, constantWindupSpeedDistance);
             GetWindow(swingWindow, swingSpeed, swingAcceleration, swingDeceleration, constantSwingSpeedDistance, windupWindow[2]);
             rotationOffsetIncrement = swingRotationOffset / (swingWindow[1] - swingWindow[0]);
+            fadeIncrement = 1f / (float)fadeTime;
+            fadeOutThreshold = swingWindow[2];
         }
 
+        // Calculates the frame windows for the different attack phases
         private void GetWindow(int[] window, float speed, float acceleration, float deceleration, float constDistance, int offset = 0)
         {
             float windupAccelerationTime = speed / acceleration;
