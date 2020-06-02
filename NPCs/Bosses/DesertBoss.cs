@@ -21,11 +21,10 @@ namespace DesertMod.NPCs.Bosses
         private int daggerDamage = 1;
         private float daggerSpeed = 25f;
         private int halberdDamage = 10;
-        private float halberdSpeed = 20f;
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cursed Sphinx");
+            DisplayName.SetDefault("Ankh Amet, The Cursed Sphinx");
             Main.npcFrameCount[npc.type] = 4;
         }
 
@@ -48,6 +47,8 @@ namespace DesertMod.NPCs.Bosses
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
 
+            music = mod.GetSoundSlot(SoundType.Music, "Sounds/Music/DesertBossMusic");
+
             //bossBag = mod.ItemType("DesertBossTreasureBag");
         }
 
@@ -62,6 +63,8 @@ namespace DesertMod.NPCs.Bosses
         {
             // Add "tick" to the phase counter of AI
             aiPhase++;
+
+            //WorldGen.PlaceTile((int)npc.position.X, (int)npc.position.Y, TileID.Sand, true, true);
 
             npc.TargetClosest(true);
             Player player = Main.player[npc.target];
