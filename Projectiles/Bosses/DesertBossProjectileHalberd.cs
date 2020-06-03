@@ -29,6 +29,7 @@ namespace DesertMod.Projectiles.Bosses
          * Both the windup and the swing part of the attack have 3 stages: Acceleration, Constant Speed and Deceleration
          * First the acceleration will be applied until the speed is reached, after which the constant speed is applied
          * as long as it takes to reach the constantSpeedDistance. Lastly, the deceleration is applied until speed is 0.
+         * ISSUE: Acceleration and deceleretaionmay override constant speed, making the constant speed window size of 0.
          */
         private bool leftToRight = true; // In which direction the attack will go
         private float distanceFromCenter = 150f; // How far the projectile is from the npc
