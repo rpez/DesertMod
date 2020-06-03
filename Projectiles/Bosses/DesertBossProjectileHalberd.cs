@@ -22,6 +22,7 @@ namespace DesertMod.Projectiles.Bosses
         private float rotationOffsetIncrement;
         private int fadeOutThreshold;
         private float fadeIncrement;
+        private float extensionIncrement;
 
         /* 
          * ATTACK ANIMATION VARIABLES (Modify these to alter the movement of the attack)
@@ -29,22 +30,22 @@ namespace DesertMod.Projectiles.Bosses
          * First the acceleration will be applied until the speed is reached, after which the constant speed is applied
          * as long as it takes to reach the constantSpeedDistance. Lastly, the deceleration is applied until speed is 0.
          */
-        private bool leftToRight = true; // In which directiopn the attack will go
-
-        private float windupSpeed = 2f;
-        private float windupAcceleration = 0.1f;
-        private float windupDeceleration = 0.02f;
-        private float constantWindupSpeedDistance = 20f;
-
-        private float swingSpeed = 20f;
-        private float swingAcceleration = 1f;
-        private float swingDeceleration = 1f;
-        private float constantSwingSpeedDistance = 90f;
-
+        private bool leftToRight = true; // In which direction the attack will go
         private float distanceFromCenter = 150f; // How far the projectile is from the npc
+        private float extensionDistance = 100f; // How far the projectile will reach from the npc during the swing
         private float swingRotationOffset = 45f; // How much the blade will tilt during the swing
         private int fadeTime = 50; // How much time the fade in and fade out will take
 
+        private float windupSpeed = 2f;
+        private float windupAcceleration = 0.2f;
+        private float windupDeceleration = 0.02f;
+        private float constantWindupSpeedDistance = 15f;
+
+        private float swingSpeed = 30f;
+        private float swingAcceleration = 3f;
+        private float swingDeceleration = 2f;
+        private float constantSwingSpeedDistance = 20f;
+        
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ancient Blade");
@@ -74,7 +75,7 @@ namespace DesertMod.Projectiles.Bosses
                 alpha += fadeIncrement;
                 return new Color(alpha, alpha, alpha, alpha);
             }
-            else if (aiPhase > fadeOutThreshold && aiPhase < fadeOutThreshold + fadeTime)
+            else if (aiPhase > fadeOutThreshold)
             {
                 alpha -= fadeIncrement;
                 return new Color(alpha, alpha, alpha, alpha);
@@ -117,16 +118,21 @@ namespace DesertMod.Projectiles.Bosses
             {
                 currentSpeed += swingAcceleration;
                 halberdRotation += currentSpeed;
+                halberdRotationOffset += rotationOffsetIncrement;
+                distanceFromCenter += extensionIncrement;
             }
             else if (aiPhase < swingWindow[1])
             {
                 halberdRotation += swingSpeed;
                 halberdRotationOffset += rotationOffsetIncrement;
+                distanceFromCenter += extensionIncrement;
             }
             else if (aiPhase < swingWindow[2])
             {
                 currentSpeed -= swingDeceleration;
                 halberdRotation += currentSpeed;
+                halberdRotationOffset += rotationOffsetIncrement;
+                distanceFromCenter += extensionIncrement;
             }
             else if (aiPhase < fadeOutThreshold + fadeTime)
             {
@@ -144,19 +150,25 @@ namespace DesertMod.Projectiles.Bosses
         // Initializes one-time calculated values
         private void InitializeValues()
         {
-            npc = Main.npc[(int)projectile.ai[0]];
+            npc = Main.npc[(int)projectile.ai[0]]; // Reference to the boss
+            leftToRight = (int)projectile.ai[1] == 0; // Attack direction (0 = left to right, 1 = rigt to left)
+
+            distanceFromCenter = leftToRight ? distanceFromCenter : -distanceFromCenter;
+            extensionDistance = leftToRight ? extensionDistance : -extensionDistance;
 
             windupSpeed = leftToRight ? windupSpeed : -windupSpeed;
             windupAcceleration = leftToRight ? windupAcceleration : -windupAcceleration;
             windupDeceleration = leftToRight ? windupDeceleration : -windupDeceleration;
 
-            swingSpeed = leftToRight ? -swingSpeed : windupSpeed;
+            swingSpeed = leftToRight ? -swingSpeed : swingSpeed;
             swingAcceleration = leftToRight ? -swingAcceleration : swingAcceleration;
             swingDeceleration = leftToRight ? -swingDeceleration : swingDeceleration;
 
             GetWindow(windupWindow, windupSpeed, windupAcceleration, windupDeceleration, constantWindupSpeedDistance);
             GetWindow(swingWindow, swingSpeed, swingAcceleration, swingDeceleration, constantSwingSpeedDistance, windupWindow[2]);
-            rotationOffsetIncrement = swingRotationOffset / (swingWindow[1] - swingWindow[0]);
+
+            rotationOffsetIncrement = swingRotationOffset / (float)(swingWindow[2] - windupWindow[2]);
+            extensionIncrement = extensionDistance / (float)(swingWindow[2] - windupWindow[2]);
             fadeIncrement = 1f / (float)fadeTime;
             fadeOutThreshold = swingWindow[2];
         }
@@ -164,12 +176,12 @@ namespace DesertMod.Projectiles.Bosses
         // Calculates the frame windows for the different attack phases
         private void GetWindow(int[] window, float speed, float acceleration, float deceleration, float constDistance, int offset = 0)
         {
-            float windupAccelerationTime = speed / acceleration;
-            float windupDecelerationTime = speed / deceleration;
+            float accelerationTime = Math.Abs(speed) / Math.Abs(acceleration);
+            float decelerationTime = Math.Abs(speed) / Math.Abs(deceleration);
             float constantSpeedTime = constDistance / Math.Abs(speed);
-            window[0] = offset + (int)windupAccelerationTime;
+            window[0] = offset + (int)accelerationTime;
             window[1] = window[0] + (int)constantSpeedTime;
-            window[2] = window[1] + (int)windupDecelerationTime;
+            window[2] = window[1] + (int)decelerationTime;
         }
     }
 }

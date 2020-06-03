@@ -127,12 +127,17 @@ namespace DesertMod.NPCs.Bosses
             else if (npc.life < npc.lifeMax / 2)
             {
                 npc.velocity = Vector2.Zero;
-                if (aiPhase >= 300)
+                if (aiPhase >= 150 && aiPhase < 151)
                 {
-                    //Projectile.NewProjectile(bossCenter, towardsPlayer * halberdSpeed, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 5f);
                     int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 0f);
                     Main.projectile[pro].ai[0] = npc.whoAmI;
-                    //NPC.NewNPC((int) bossCenter.X, (int) bossCenter.Y, mod.NPCType("Halberd"));
+                    Main.projectile[pro].ai[1] = 0f;
+                }
+                if (aiPhase >= 250 && aiPhase < 251)
+                {
+                    int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 0f);
+                    Main.projectile[pro].ai[0] = npc.whoAmI;
+                    Main.projectile[pro].ai[1] = 1f;
                     aiPhase = 0;
                 }
             }
