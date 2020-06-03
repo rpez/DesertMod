@@ -31,12 +31,6 @@ namespace DesertMod.Projectiles.Bosses
          * as long as it takes to reach the constantSpeedDistance. Lastly, the deceleration is applied until speed is 0.
          * ISSUE: Acceleration and deceleretaionmay override constant speed, making the constant speed window size of 0.
          */
-        private bool leftToRight = true; // In which direction the attack will go
-        private float distanceFromCenter = 150f; // How far the projectile is from the npc
-        private float extensionDistance = 100f; // How far the projectile will reach from the npc during the swing
-        private float swingRotationOffset = 45f; // How much the blade will tilt during the swing
-        private int fadeTime = 50; // How much time the fade in and fade out will take
-
         private float windupSpeed = 2f;
         private float windupAcceleration = 0.2f;
         private float windupDeceleration = 0.02f;
@@ -46,7 +40,13 @@ namespace DesertMod.Projectiles.Bosses
         private float swingAcceleration = 3f;
         private float swingDeceleration = 2f;
         private float constantSwingSpeedDistance = 20f;
-        
+
+        private bool leftToRight = true; // In which direction the attack will go
+        private float distanceFromCenter = 150f; // How far the projectile is from the npc
+        private float extensionDistance = 100f; // How far the projectile will reach from the npc during the swing
+        private float swingRotationOffset = 45f; // How much the blade will tilt during the swing
+        private int fadeTime = 50; // How much time the fade in and fade out will take
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ancient Blade");
