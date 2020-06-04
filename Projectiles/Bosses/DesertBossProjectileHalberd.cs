@@ -29,7 +29,7 @@ namespace DesertMod.Projectiles.Bosses
          * Both the windup and the swing part of the attack have 3 stages: Acceleration, Constant Speed and Deceleration
          * First the acceleration will be applied until the speed is reached, after which the constant speed is applied
          * as long as it takes to reach the constantSpeedDistance. Lastly, the deceleration is applied until speed is 0.
-         * ISSUE: Acceleration and deceleretaionmay override constant speed, making the constant speed window size of 0.
+         * ISSUE: Acceleration and deceleration may override constant speed, making the constant speed window size of 0.
          */
         private float windupSpeed = 2f;
         private float windupAcceleration = 0.2f;
@@ -101,6 +101,7 @@ namespace DesertMod.Projectiles.Bosses
 
             // Modify speed depending on movement values
             // windupWindow and swingWindow include the different aiPhase thresholds for the attack phases respectively
+            // TODO: Better DRY-code
             if (aiPhase < windupWindow[0])
             {
                 currentSpeed += windupAcceleration;
@@ -108,7 +109,8 @@ namespace DesertMod.Projectiles.Bosses
             }
             else if (aiPhase < windupWindow[1])
             {
-                halberdRotation += windupSpeed;
+                currentSpeed = windupSpeed;
+                halberdRotation += currentSpeed;
             }
             else if (aiPhase < windupWindow[2])
             {
@@ -119,12 +121,15 @@ namespace DesertMod.Projectiles.Bosses
             {
                 currentSpeed += swingAcceleration;
                 halberdRotation += currentSpeed;
+
                 halberdRotationOffset += rotationOffsetIncrement;
                 distanceFromCenter += extensionIncrement;
             }
             else if (aiPhase < swingWindow[1])
             {
-                halberdRotation += swingSpeed;
+                currentSpeed = swingSpeed;
+                halberdRotation += currentSpeed;
+
                 halberdRotationOffset += rotationOffsetIncrement;
                 distanceFromCenter += extensionIncrement;
             }
@@ -132,6 +137,7 @@ namespace DesertMod.Projectiles.Bosses
             {
                 currentSpeed -= swingDeceleration;
                 halberdRotation += currentSpeed;
+
                 halberdRotationOffset += rotationOffsetIncrement;
                 distanceFromCenter += extensionIncrement;
             }
