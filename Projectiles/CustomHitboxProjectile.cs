@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace DesertMod.Projectiles
 {
-    public class SimpleHitbox : ModProjectile
+    public class CustomHitboxProjectile : ModProjectile
     {
         public override bool CanHitPlayer(Player target)
         {
@@ -24,9 +24,9 @@ namespace DesertMod.Projectiles
         {
             if (Collides(entity))
             {
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
 
         public virtual bool Collides(Entity entity)

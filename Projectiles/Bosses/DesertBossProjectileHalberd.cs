@@ -6,7 +6,7 @@ using System;
 
 namespace DesertMod.Projectiles.Bosses
 {
-    class DesertBossProjectileHalberd : ModProjectile
+    class DesertBossProjectileHalberd : CustomHitboxProjectile
     {
         // Halberd state values
         private int aiPhase = 0;
@@ -23,6 +23,12 @@ namespace DesertMod.Projectiles.Bosses
         private int fadeOutThreshold;
         private float fadeIncrement;
         private float extensionIncrement;
+
+        // Hitbox
+        private Vector2 bladeHitboxSize;
+        private float bladeHitboxOffset;
+        private Vector2 offSetDirection;
+        private float bladeHitBoxScaleDivisor = 4f;
 
         /* 
          * ATTACK ANIMATION VARIABLES (Modify these to alter the movement of the attack)
@@ -65,7 +71,56 @@ namespace DesertMod.Projectiles.Bosses
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
 
-            projectile.timeLeft = 1000;
+            projectile.timeLeft = 1001110;
+        }
+
+        public override bool Collides(Entity entity)
+        {
+            return Collides(bladeHitboxOffset, offSetDirection, projectile.position, bladeHitboxSize, entity.position, entity.Size);
+        }
+
+        // Check custom collision
+        public bool Collides(float offset, Vector2 offsetDir, Vector2 projectilePos, Vector2 projectileDim, Vector2 boxPos, Vector2 boxDim)
+        {
+            Vector2 newOrigin = projectilePos + offsetDir * offset;
+            Vector2 leftTop = new Vector2(boxPos.X - boxDim.X / 2, boxPos.Y - boxDim.Y / 2);
+            Vector2 rightTop = new Vector2(boxPos.X + boxDim.X / 2, boxPos.Y - boxDim.Y / 2);
+            Vector2 leftBottom = new Vector2(boxPos.X - boxDim.X / 2, boxPos.Y + boxDim.Y / 2);
+            Vector2 rightBottom = new Vector2(boxPos.X + boxDim.X / 2, boxPos.Y + boxDim.Y / 2);
+            //int proj = Projectile.NewProjectile(leftTop, Vector2.Zero, mod.ProjectileType("DebugProjectile"), 0, 0);
+            //Main.projectile[proj].ai[0] = 0;
+            //proj = Projectile.NewProjectile(rightTop, Vector2.Zero, mod.ProjectileType("DebugProjectile"), 0, 0);
+            //Main.projectile[proj].ai[0] = 0;
+            //proj = Projectile.NewProjectile(leftBottom, Vector2.Zero, mod.ProjectileType("DebugProjectile"), 0, 0);
+            //Main.projectile[proj].ai[0] = 0;
+            //proj = Projectile.NewProjectile(rightBottom, Vector2.Zero, mod.ProjectileType("DebugProjectile"), 0, 0);
+            //Main.projectile[proj].ai[0] = 0;
+            return PointIsInRectangle(newOrigin, projectileDim, leftTop)
+                || PointIsInRectangle(newOrigin, projectileDim, rightTop)
+                || PointIsInRectangle(newOrigin, projectileDim, leftBottom)
+                || PointIsInRectangle(newOrigin, projectileDim, rightBottom);
+        }
+
+        // Return true if point is in rectangle, else false
+        private bool PointIsInRectangle(Vector2 origin, Vector2 recDim, Vector2 point)
+        {
+            //Vector2 left = new Vector2(origin.X - recDim.X / 2, origin.Y);
+            //Vector2 right = new Vector2(origin.X + recDim.X / 2, origin.Y);
+            //Vector2 top = new Vector2(origin.X, origin.Y - recDim.Y / 2);
+            //Vector2 bottom = new Vector2(origin.X, origin.Y + recDim.Y / 2);
+            //int proj = Projectile.NewProjectile(left, Vector2.Zero, mod.ProjectileType("DebugProjectile"), 0, 0);
+            //Main.projectile[proj].ai[0] = 0;
+            //proj = Projectile.NewProjectile(right, Vector2.Zero, mod.ProjectileType("DebugProjectile"), 0, 0);
+            //Main.projectile[proj].ai[0] = 0;
+            //proj = Projectile.NewProjectile(top, Vector2.Zero, mod.ProjectileType("DebugProjectile"), 0, 0);
+            //Main.projectile[proj].ai[0] = 0;
+            //proj = Projectile.NewProjectile(bottom, Vector2.Zero, mod.ProjectileType("DebugProjectile"), 0, 0);
+            //Main.projectile[proj].ai[0] = 0;
+            bool inXRight = point.X < origin.X + recDim.X / 2;
+            bool inXLeft = point.X > origin.X - recDim.X / 2;
+            bool inYBottom = point.Y < origin.Y + recDim.Y / 2;
+            bool inYTop = point.Y > origin.Y - recDim.Y / 2;
+            return inXRight && inXLeft && inYBottom && inYTop;
         }
 
         public override Color? GetAlpha(Color lightColor)
@@ -99,6 +154,9 @@ namespace DesertMod.Projectiles.Bosses
             bossToProjectile.Normalize();
             projectile.rotation = -(float)(Math.Atan2(-bossToProjectile.Y, bossToProjectile.X) + Math.PI + halberdRotationOffset / 180f * Math.PI);
 
+            // Projectile hitbox offset direction
+            offSetDirection = new Vector2(-bossToProjectile.Y, bossToProjectile.X);
+
             // Modify speed depending on movement values
             // windupWindow and swingWindow include the different aiPhase thresholds for the attack phases respectively
             // TODO: Better DRY-code
@@ -114,8 +172,9 @@ namespace DesertMod.Projectiles.Bosses
             }
             else if (aiPhase < windupWindow[2])
             {
-                currentSpeed -= windupDeceleration;
-                halberdRotation += currentSpeed;
+                //currentSpeed -= windupDeceleration;
+                //halberdRotation += currentSpeed;
+                aiPhase = windupWindow[1];
             }
             else if (aiPhase < swingWindow[0])
             {
@@ -178,6 +237,9 @@ namespace DesertMod.Projectiles.Bosses
             extensionIncrement = extensionDistance / (float)(swingWindow[2] - windupWindow[2]);
             fadeIncrement = 1f / (float)fadeTime;
             fadeOutThreshold = swingWindow[2];
+
+            bladeHitboxSize = new Vector2(projectile.Size.X, projectile.Size.Y);// / bladeHitBoxScaleDivisor);
+            bladeHitboxOffset = bladeHitboxSize.Y * (bladeHitBoxScaleDivisor - 1f) / 2f;
         }
 
         // Calculates the frame windows for the different attack phases

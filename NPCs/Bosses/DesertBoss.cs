@@ -2,6 +2,7 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
 using Microsoft.Xna.Framework;
+using DesertMod;
 using System;
 
 namespace DesertMod.NPCs.Bosses
@@ -61,6 +62,8 @@ namespace DesertMod.NPCs.Bosses
 
         public override void AI()
         {
+            if (aiPhase == 0) DesertMod.instance.ShowDebugUI();
+
             // Add "tick" to the phase counter of AI
             aiPhase++;
 
@@ -133,13 +136,13 @@ namespace DesertMod.NPCs.Bosses
                     Main.projectile[pro].ai[0] = npc.whoAmI;
                     Main.projectile[pro].ai[1] = 0f;
                 }
-                if (aiPhase >= 250 && aiPhase < 251)
-                {
-                    int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 0f);
-                    Main.projectile[pro].ai[0] = npc.whoAmI;
-                    Main.projectile[pro].ai[1] = 1f;
-                    aiPhase = 0;
-                }
+                //if (aiPhase >= 250 && aiPhase < 251)
+                //{
+                //    int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 0f);
+                //    Main.projectile[pro].ai[0] = npc.whoAmI;
+                //    Main.projectile[pro].ai[1] = 1f;
+                //    aiPhase = 0;
+                //}
             }
         }
 
