@@ -87,14 +87,6 @@ namespace DesertMod.Projectiles.Bosses
             Vector2 rightTop = new Vector2(boxPos.X + boxDim.X / 2, boxPos.Y - boxDim.Y / 2);
             Vector2 leftBottom = new Vector2(boxPos.X - boxDim.X / 2, boxPos.Y + boxDim.Y / 2);
             Vector2 rightBottom = new Vector2(boxPos.X + boxDim.X / 2, boxPos.Y + boxDim.Y / 2);
-            //int proj = Projectile.NewProjectile(leftTop, Vector2.Zero, mod.ProjectileType("DebugProjectile"), 0, 0);
-            //Main.projectile[proj].ai[0] = 0;
-            //proj = Projectile.NewProjectile(rightTop, Vector2.Zero, mod.ProjectileType("DebugProjectile"), 0, 0);
-            //Main.projectile[proj].ai[0] = 0;
-            //proj = Projectile.NewProjectile(leftBottom, Vector2.Zero, mod.ProjectileType("DebugProjectile"), 0, 0);
-            //Main.projectile[proj].ai[0] = 0;
-            //proj = Projectile.NewProjectile(rightBottom, Vector2.Zero, mod.ProjectileType("DebugProjectile"), 0, 0);
-            //Main.projectile[proj].ai[0] = 0;
             return PointIsInRectangle(newOrigin, projectileDim, leftTop)
                 || PointIsInRectangle(newOrigin, projectileDim, rightTop)
                 || PointIsInRectangle(newOrigin, projectileDim, leftBottom)
@@ -104,18 +96,6 @@ namespace DesertMod.Projectiles.Bosses
         // Return true if point is in rectangle, else false
         private bool PointIsInRectangle(Vector2 origin, Vector2 recDim, Vector2 point)
         {
-            //Vector2 left = new Vector2(origin.X - recDim.X / 2, origin.Y);
-            //Vector2 right = new Vector2(origin.X + recDim.X / 2, origin.Y);
-            //Vector2 top = new Vector2(origin.X, origin.Y - recDim.Y / 2);
-            //Vector2 bottom = new Vector2(origin.X, origin.Y + recDim.Y / 2);
-            //int proj = Projectile.NewProjectile(left, Vector2.Zero, mod.ProjectileType("DebugProjectile"), 0, 0);
-            //Main.projectile[proj].ai[0] = 0;
-            //proj = Projectile.NewProjectile(right, Vector2.Zero, mod.ProjectileType("DebugProjectile"), 0, 0);
-            //Main.projectile[proj].ai[0] = 0;
-            //proj = Projectile.NewProjectile(top, Vector2.Zero, mod.ProjectileType("DebugProjectile"), 0, 0);
-            //Main.projectile[proj].ai[0] = 0;
-            //proj = Projectile.NewProjectile(bottom, Vector2.Zero, mod.ProjectileType("DebugProjectile"), 0, 0);
-            //Main.projectile[proj].ai[0] = 0;
             bool inXRight = point.X < origin.X + recDim.X / 2;
             bool inXLeft = point.X > origin.X - recDim.X / 2;
             bool inYBottom = point.Y < origin.Y + recDim.Y / 2;

@@ -61,7 +61,7 @@ namespace DesertMod
                         }
                         return true;
                     },
-                       InterfaceScaleType.UI));
+                    InterfaceScaleType.UI));
             }
         }
 
