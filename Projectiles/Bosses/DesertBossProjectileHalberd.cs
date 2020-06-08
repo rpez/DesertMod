@@ -1,8 +1,7 @@
 ﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DesertMod.Projectiles.Bosses
 {
@@ -191,6 +190,32 @@ namespace DesertMod.Projectiles.Bosses
 
             // Add tick to ai phase
             aiPhase++;
+        }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+            if (!leftToRight)
+            {
+                Texture2D texture = Main.projectileTexture[projectile.type];
+                int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
+                int startY = frameHeight * projectile.frame;
+                Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+                Vector2 origin = sourceRectangle.Size() / 2f;
+                Main.spriteBatch.Draw(texture,
+                    projectile.position,
+                    sourceRectangle,
+                    projectile.GetAlpha(lightColor),
+                    projectile.rotation,
+                    origin,
+                    projectile.scale,
+                    SpriteEffects.FlipHorizontally,
+                    0f);
+            }
+            else
+            {
+                base.PreDraw(spriteBatch, lightColor);                
+            }
+            return true;
         }
 
         // Initializes one-time calculated values

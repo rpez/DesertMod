@@ -10,9 +10,11 @@ namespace DesertMod.NPCs.Bosses
     [AutoloadBossHead]
     public class DesertBoss : ModNPC
     {
+        private enum BossPhase { HEALTHY, DAMAGED, RAGED }
+
         // AI
         private int aiPhase = 0;
-        private int attackTimer = 0;
+        private BossPhase currentPhase = BossPhase.HEALTHY;
 
         // Animation
         private int frame = 0;
@@ -64,6 +66,10 @@ namespace DesertMod.NPCs.Bosses
         {
             if (aiPhase == 0) DesertMod.instance.ShowDebugUI();
 
+            if (npc.life >= npc.lifeMax / 2) currentPhase = BossPhase.HEALTHY;
+            else if (npc.life <= npc.lifeMax / 2 && npc.life >= npc.lifeMax / 3) currentPhase = BossPhase.DAMAGED;
+            else currentPhase = BossPhase.RAGED;
+
             // Add "tick" to the phase counter of AI
             aiPhase++;
 
@@ -100,7 +106,7 @@ namespace DesertMod.NPCs.Bosses
             towardsPlayer.Normalize();
 
             // When healthy
-            if (npc.life >= npc.lifeMax / 2)
+            if (currentPhase == BossPhase.HEALTHY)
             {
                 // Movement
                 int distance = (int)Vector2.Distance(target, npc.Center);
@@ -127,7 +133,7 @@ namespace DesertMod.NPCs.Bosses
             }
 
             // Below half HP
-            else if (npc.life < npc.lifeMax / 2)
+            else if (currentPhase == BossPhase.DAMAGED)
             {
                 npc.velocity = Vector2.Zero;
                 if (aiPhase >= 150 && aiPhase < 151)
@@ -135,15 +141,14 @@ namespace DesertMod.NPCs.Bosses
                     int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 0f);
                     Main.projectile[pro].ai[0] = npc.whoAmI;
                     Main.projectile[pro].ai[1] = 0f;
+                }
+                if (aiPhase >= 350 && aiPhase < 351)
+                {
+                    int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 0f);
+                    Main.projectile[pro].ai[0] = npc.whoAmI;
+                    Main.projectile[pro].ai[1] = 1f;
                     aiPhase = 0;
                 }
-                //if (aiPhase >= 250 && aiPhase < 251)
-                //{
-                //    int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 0f);
-                //    Main.projectile[pro].ai[0] = npc.whoAmI;
-                //    Main.projectile[pro].ai[1] = 1f;
-                //    aiPhase = 0;
-                //}
             }
         }
 
