@@ -60,7 +60,7 @@ namespace DesertMod.Projectiles.Bosses
 
         public override void SetDefaults()
         {
-            projectile.width = 76;
+            projectile.width = 398;
             projectile.height = 398;
             projectile.scale = 1.0f;
 
@@ -71,12 +71,12 @@ namespace DesertMod.Projectiles.Bosses
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
 
-            projectile.timeLeft = 1001110;
+            projectile.timeLeft = 1000;
         }
 
         public override bool Collides(Entity entity)
         {
-            return Collides(bladeHitboxOffset, offSetDirection, projectile.position, bladeHitboxSize, entity.position, entity.Size);
+            return Collides(bladeHitboxOffset, offSetDirection, new Vector2(projectile.position.X + projectile.width / 2, projectile.position.Y + projectile.height / 2), bladeHitboxSize, entity.position, entity.Size);
         }
 
         // Check custom collision
@@ -105,7 +105,7 @@ namespace DesertMod.Projectiles.Bosses
 
         public override Color? GetAlpha(Color lightColor)
         {
-            // Fade in for the projectile
+            // Fade in and out for the projectile
             if (aiPhase <= fadeTime)
             {
                 alpha += fadeIncrement;
@@ -116,7 +116,8 @@ namespace DesertMod.Projectiles.Bosses
                 alpha -= fadeIncrement;
                 return new Color(alpha, alpha, alpha, alpha);
             }
-            else return Color.White;
+            else
+                return Color.White;
         }
 
         public override void AI()
@@ -152,9 +153,8 @@ namespace DesertMod.Projectiles.Bosses
             }
             else if (aiPhase < windupWindow[2])
             {
-                //currentSpeed -= windupDeceleration;
-                //halberdRotation += currentSpeed;
-                aiPhase = windupWindow[1];
+                currentSpeed -= windupDeceleration;
+                halberdRotation += currentSpeed;
             }
             else if (aiPhase < swingWindow[0])
             {
@@ -218,7 +218,7 @@ namespace DesertMod.Projectiles.Bosses
             fadeIncrement = 1f / (float)fadeTime;
             fadeOutThreshold = swingWindow[2];
 
-            bladeHitboxSize = new Vector2(projectile.Size.X, projectile.Size.Y);// / bladeHitBoxScaleDivisor);
+            bladeHitboxSize = new Vector2(projectile.Size.Y / bladeHitBoxScaleDivisor, projectile.Size.Y / bladeHitBoxScaleDivisor);
             bladeHitboxOffset = bladeHitboxSize.Y * (bladeHitBoxScaleDivisor - 1f) / 2f;
         }
 

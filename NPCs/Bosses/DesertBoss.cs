@@ -135,6 +135,7 @@ namespace DesertMod.NPCs.Bosses
                     int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 0f);
                     Main.projectile[pro].ai[0] = npc.whoAmI;
                     Main.projectile[pro].ai[1] = 0f;
+                    aiPhase = 0;
                 }
                 //if (aiPhase >= 250 && aiPhase < 251)
                 //{
