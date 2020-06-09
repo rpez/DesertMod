@@ -60,6 +60,7 @@ namespace DesertMod.Projectiles.Bosses
 
         public override void SetDefaults()
         {
+            // NOTE: workaround requires sprite to be square, according to the larger dimension
             projectile.width = 398;
             projectile.height = 398;
             projectile.scale = 1.0f;
@@ -82,11 +83,15 @@ namespace DesertMod.Projectiles.Bosses
         // Check custom collision
         public bool Collides(float offset, Vector2 offsetDir, Vector2 projectilePos, Vector2 projectileDim, Vector2 boxPos, Vector2 boxDim)
         {
+            // Move origin towards the blade
             Vector2 newOrigin = projectilePos + offsetDir * offset;
+
+            // Collision corners
             Vector2 leftTop = new Vector2(boxPos.X - boxDim.X / 2, boxPos.Y - boxDim.Y / 2);
             Vector2 rightTop = new Vector2(boxPos.X + boxDim.X / 2, boxPos.Y - boxDim.Y / 2);
             Vector2 leftBottom = new Vector2(boxPos.X - boxDim.X / 2, boxPos.Y + boxDim.Y / 2);
             Vector2 rightBottom = new Vector2(boxPos.X + boxDim.X / 2, boxPos.Y + boxDim.Y / 2);
+
             return PointIsInRectangle(newOrigin, projectileDim, leftTop)
                 || PointIsInRectangle(newOrigin, projectileDim, rightTop)
                 || PointIsInRectangle(newOrigin, projectileDim, leftBottom)
@@ -122,7 +127,7 @@ namespace DesertMod.Projectiles.Bosses
 
         public override void AI()
         {
-            if (aiPhase == 0) InitializeValues();
+            if (aiPhase == 0) InitializeValues(); // Initialization needed only once (but can be called again if needed)
 
             double rad = halberdRotation * (Math.PI / 180);
 
@@ -200,8 +205,10 @@ namespace DesertMod.Projectiles.Bosses
             npc = Main.npc[(int)projectile.ai[0]]; // Reference to the boss
             leftToRight = (int)projectile.ai[1] == 0; // Attack direction (0 = left to right, 1 = rigt to left)
 
+            // Change sprite based on the swing direction
             projectile.frame = leftToRight ? 0 : 1;
 
+            // Change value signs based on the swing direction
             distanceFromCenter = leftToRight ? distanceFromCenter : -distanceFromCenter;
             extensionDistance = leftToRight ? extensionDistance : -extensionDistance;
 
@@ -215,14 +222,17 @@ namespace DesertMod.Projectiles.Bosses
 
             swingRotationOffset = leftToRight ? swingRotationOffset : -swingRotationOffset;
 
+            // Get the aiPhase windows for windup and swing
             GetWindow(windupWindow, windupSpeed, windupAcceleration, windupDeceleration, constantWindupSpeedDistance);
             GetWindow(swingWindow, swingSpeed, swingAcceleration, swingDeceleration, constantSwingSpeedDistance, windupWindow[2]);
 
+            // Calculate some tick-wise increments and thresholds
             rotationOffsetIncrement = swingRotationOffset / (float)(swingWindow[2] - windupWindow[2]);
             extensionIncrement = extensionDistance / (float)(swingWindow[2] - windupWindow[2]);
             fadeIncrement = 1f / (float)fadeTime;
             fadeOutThreshold = swingWindow[2];
 
+            // Calculate hitbox offset
             bladeHitboxSize = new Vector2(projectile.Size.Y / bladeHitBoxScaleDivisor, projectile.Size.Y / bladeHitBoxScaleDivisor);
             bladeHitboxOffset = bladeHitboxSize.Y * (bladeHitBoxScaleDivisor - 1f) / 2f;
         }
