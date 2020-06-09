@@ -28,7 +28,7 @@ namespace DesertMod.Projectiles
             projectile.penetrate = 1;
             projectile.tileCollide = false;
 
-            projectile.timeLeft = 100;
+            projectile.timeLeft = 20;
         }
 
         public override Color? GetAlpha(Color lightColor)

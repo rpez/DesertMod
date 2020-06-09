@@ -77,7 +77,7 @@ namespace DesertMod.Projectiles.Bosses
 
         public override bool Collides(Entity entity)
         {
-            return Collides(bladeHitboxOffset, offSetDirection, new Vector2(projectile.position.X + projectile.width / 2, projectile.position.Y + projectile.height / 2), bladeHitboxSize, entity.position, entity.Size);
+            return Collides(bladeHitboxOffset, offSetDirection, projectile.Center, bladeHitboxSize, entity.Center, entity.Size);
         }
 
         // Check custom collision
@@ -141,7 +141,7 @@ namespace DesertMod.Projectiles.Bosses
             float oneEighty = leftToRight ? (float)Math.PI : 0f;
             projectile.rotation = -(float)(Math.Atan2(-bossToProjectile.Y, bossToProjectile.X) + oneEighty + halberdRotationOffset / 180f * Math.PI);
 
-            // Projectile hitbox offset direction
+            // Projectile hitbox offset direction   
             offSetDirection = new Vector2(-bossToProjectile.Y, bossToProjectile.X);
 
             // Modify speed depending on movement values
