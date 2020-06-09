@@ -55,6 +55,7 @@ namespace DesertMod.Projectiles.Bosses
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ancient Blade");
+            Main.projFrames[projectile.type] = 2;
         }
 
         public override void SetDefaults()
@@ -132,7 +133,8 @@ namespace DesertMod.Projectiles.Bosses
             // Rotate projectile sprite
             Vector2 bossToProjectile = projectile.Center - npc.Center;
             bossToProjectile.Normalize();
-            projectile.rotation = -(float)(Math.Atan2(-bossToProjectile.Y, bossToProjectile.X) + Math.PI + halberdRotationOffset / 180f * Math.PI);
+            float oneEighty = leftToRight ? (float)Math.PI : 0f;
+            projectile.rotation = -(float)(Math.Atan2(-bossToProjectile.Y, bossToProjectile.X) + oneEighty + halberdRotationOffset / 180f * Math.PI);
 
             // Projectile hitbox offset direction
             offSetDirection = new Vector2(-bossToProjectile.Y, bossToProjectile.X);
@@ -192,37 +194,13 @@ namespace DesertMod.Projectiles.Bosses
             aiPhase++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
-        {
-            if (!leftToRight)
-            {
-                Texture2D texture = Main.projectileTexture[projectile.type];
-                int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
-                int startY = frameHeight * projectile.frame;
-                Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
-                Vector2 origin = sourceRectangle.Size() / 2f;
-                Main.spriteBatch.Draw(texture,
-                    projectile.position,
-                    sourceRectangle,
-                    projectile.GetAlpha(lightColor),
-                    projectile.rotation,
-                    origin,
-                    projectile.scale,
-                    SpriteEffects.FlipHorizontally,
-                    0f);
-            }
-            else
-            {
-                base.PreDraw(spriteBatch, lightColor);                
-            }
-            return true;
-        }
-
         // Initializes one-time calculated values
         private void InitializeValues()
         {
             npc = Main.npc[(int)projectile.ai[0]]; // Reference to the boss
             leftToRight = (int)projectile.ai[1] == 0; // Attack direction (0 = left to right, 1 = rigt to left)
+
+            projectile.frame = leftToRight ? 0 : 1;
 
             distanceFromCenter = leftToRight ? distanceFromCenter : -distanceFromCenter;
             extensionDistance = leftToRight ? extensionDistance : -extensionDistance;
@@ -234,6 +212,8 @@ namespace DesertMod.Projectiles.Bosses
             swingSpeed = leftToRight ? -swingSpeed : swingSpeed;
             swingAcceleration = leftToRight ? -swingAcceleration : swingAcceleration;
             swingDeceleration = leftToRight ? -swingDeceleration : swingDeceleration;
+
+            swingRotationOffset = leftToRight ? swingRotationOffset : -swingRotationOffset;
 
             GetWindow(windupWindow, windupSpeed, windupAcceleration, windupDeceleration, constantWindupSpeedDistance);
             GetWindow(swingWindow, swingSpeed, swingAcceleration, swingDeceleration, constantSwingSpeedDistance, windupWindow[2]);
