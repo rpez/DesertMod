@@ -27,7 +27,7 @@ namespace DesertMod.Projectiles.Bosses
         private Vector2 bladeHitboxSize;
         private float bladeHitboxOffset;
         private Vector2 offSetDirection;
-        private float bladeHitBoxScaleDivisor = 4f;
+        private float bladeHitBoxScaleDivisor = 3f;
 
         /* 
          * ATTACK ANIMATION VARIABLES (Modify these to alter the movement of the attack)
@@ -222,6 +222,7 @@ namespace DesertMod.Projectiles.Bosses
 
             swingRotationOffset = leftToRight ? swingRotationOffset : -swingRotationOffset;
 
+
             // Get the aiPhase windows for windup and swing
             GetWindow(windupWindow, windupSpeed, windupAcceleration, windupDeceleration, constantWindupSpeedDistance);
             GetWindow(swingWindow, swingSpeed, swingAcceleration, swingDeceleration, constantSwingSpeedDistance, windupWindow[2]);
@@ -235,6 +236,7 @@ namespace DesertMod.Projectiles.Bosses
             // Calculate hitbox offset
             bladeHitboxSize = new Vector2(projectile.Size.Y / bladeHitBoxScaleDivisor, projectile.Size.Y / bladeHitBoxScaleDivisor);
             bladeHitboxOffset = bladeHitboxSize.Y * (bladeHitBoxScaleDivisor - 1f) / 2f;
+            if (!leftToRight) bladeHitboxOffset *= -1f;
         }
 
         // Calculates the frame windows for the different attack phases
