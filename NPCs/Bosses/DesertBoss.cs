@@ -16,6 +16,12 @@ namespace DesertMod.NPCs.Bosses
         private int aiPhase = 0;
         private BossPhase currentPhase = BossPhase.HEALTHY;
 
+        private float hoverDistanceFromPlayer = 300f;
+        private float normalSpeed = 7f;
+        private float fastSpeed = 13f;
+        private float chargeSpeed = 20f;
+        private bool charge = false;
+
         // Animation
         private int frame = 0;
         private double counting;
@@ -105,12 +111,12 @@ namespace DesertMod.NPCs.Bosses
             Vector2 towardsPlayer = target - bossCenter;
             towardsPlayer.Normalize();
 
-            // When healthy
+            // Boss phases
             if (currentPhase == BossPhase.HEALTHY)
             {
                 // Movement
                 int distance = (int)Vector2.Distance(target, npc.Center);
-                MoveTowards(npc, target - towardsPlayer * 300f, (float)(distance > 300 ? 13f : 7f), 30f);
+                MoveTowards(npc, target - towardsPlayer * hoverDistanceFromPlayer, (float)(distance > 300 ? fastSpeed : normalSpeed), 30f);
                 npc.netUpdate = true;
 
                 // Dagger attack
@@ -131,24 +137,39 @@ namespace DesertMod.NPCs.Bosses
                     aiPhase = 0;
                 }
             }
-
-            // Below half HP
             else if (currentPhase == BossPhase.DAMAGED)
             {
-                npc.velocity = Vector2.Zero;
+                // Movement
+                int distance = (int)Vector2.Distance(target, npc.Center);
+                if (charge)
+                {
+                    MoveTowards(npc, target - towardsPlayer, chargeSpeed, 30f);
+                }
+                else
+                {
+                    MoveTowards(npc, target - towardsPlayer * hoverDistanceFromPlayer, (float)(distance > 300 ? 13f : 7f), 30f);
+                }
+                npc.netUpdate = true;
+
                 if (aiPhase >= 150 && aiPhase < 151)
                 {
+                    charge = true;
                     int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 0f);
                     Main.projectile[pro].ai[0] = npc.whoAmI;
                     Main.projectile[pro].ai[1] = 0f;
                 }
                 if (aiPhase >= 350 && aiPhase < 351)
                 {
+                    charge = false;
                     int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 0f);
                     Main.projectile[pro].ai[0] = npc.whoAmI;
                     Main.projectile[pro].ai[1] = 1f;
                     aiPhase = 0;
                 }
+            }
+            else if (currentPhase == BossPhase.RAGED)
+            {
+
             }
         }
 
