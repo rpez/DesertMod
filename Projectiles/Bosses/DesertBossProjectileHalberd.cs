@@ -36,15 +36,15 @@ namespace DesertMod.Projectiles.Bosses
          * as long as it takes to reach the constantSpeedDistance. Lastly, the deceleration is applied until speed is 0.
          * ISSUE: Acceleration and deceleration may override constant speed, making the constant speed window size of 0.
          */
-        private float windupSpeed = 2f;
-        private float windupAcceleration = 0.2f;
-        private float windupDeceleration = 0.02f;
-        private float constantWindupSpeedDistance = 15f;
+        private float windupSpeed = 3f;
+        private float windupAcceleration = 0.4f;
+        private float windupDeceleration = 0.1f;
+        private float constantWindupSpeedDistance = 45f;
 
-        private float swingSpeed = 30f;
-        private float swingAcceleration = 3f;
-        private float swingDeceleration = 2f;
-        private float constantSwingSpeedDistance = 20f;
+        private float swingSpeed = 35f;
+        private float swingAcceleration = 5f;
+        private float swingDeceleration = 3f;
+        private float constantSwingSpeedDistance = 25f;
 
         private bool leftToRight = true; // In which direction the attack will go
         private float distanceFromCenter = 150f; // How far the projectile is from the npc

@@ -12,24 +12,37 @@ namespace DesertMod.NPCs.Bosses
     {
         private enum BossPhase { HEALTHY, DAMAGED, RAGED }
 
+        private Vector2 chargeDirection;
+
         // AI
         private int aiPhase = 0;
         private BossPhase currentPhase = BossPhase.HEALTHY;
 
+        // Behavior flags
+        private bool follow = true;
+        private bool hover = true;
+        private bool charge = false;
+        private bool shootPattern1 = false;
+        private bool shootPattern2 = false;
+        private bool shootPattern3 = false;
+
+        // Movement
         private float hoverDistanceFromPlayer = 300f;
+        private float fastSpeedDistance = 300f;
         private float normalSpeed = 7f;
         private float fastSpeed = 13f;
-        private float chargeSpeed = 20f;
-        private bool charge = false;
+        private float chargeSpeed = 30f;
+        private int chargeTime = 30;
+
+        // Attacks
+        private int daggerDamage = 1;
+        private float daggerSpeed = 25f;
+        private int halberdDamage = 10;
 
         // Animation
         private int frame = 0;
         private double counting;
 
-        // Stats
-        private int daggerDamage = 1;
-        private float daggerSpeed = 25f;
-        private int halberdDamage = 10;
 
         public override void SetStaticDefaults()
         {
@@ -110,37 +123,27 @@ namespace DesertMod.NPCs.Bosses
             Vector2 bossCenter = npc.Center;
             Vector2 towardsPlayer = target - bossCenter;
             towardsPlayer.Normalize();
-
+            int distance = (int)Vector2.Distance(target, npc.Center);
+            npc.netUpdate = true;
 
             /* ___________________________________________________________________________
              * 
              * HEALTHY
-             * Boss HP bar abopve half
+             * Boss HP bar above half
              * ___________________________________________________________________________
             */
             if (currentPhase == BossPhase.HEALTHY)
             {
-                // Movement
-                int distance = (int)Vector2.Distance(target, npc.Center);
-                MoveTowards(npc, target - towardsPlayer * hoverDistanceFromPlayer, (float)(distance > 300 ? fastSpeed : normalSpeed), 30f);
-                npc.netUpdate = true;
-
+                follow = true;
                 // Dagger attack
-                if (aiPhase >= 50)
+                if (aiPhase % 50 == 0)
                 {
-                    // The actual projectile
-                    Projectile.NewProjectile(bossCenter, towardsPlayer * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 0f);
-                    
-                    // Workaround ghosting trail TODO: implement better method for this
-                    for (int i = 1; i < 5; i++)
-                    {
-                        Vector2 dir = towardsPlayer;
-                        dir.Normalize();
-                        Vector2 pos = bossCenter - dir * 15f * i;
-                        Projectile.NewProjectile(pos, towardsPlayer * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), 0, 0f);
-                    }
-
-                    aiPhase = 0;
+                    shootPattern1 = true;
+                }
+                if (aiPhase % 300 == 0)
+                {
+                    hover = !hover;
+                    shootPattern2 = true;
                 }
             }
 
@@ -152,32 +155,26 @@ namespace DesertMod.NPCs.Bosses
             */
             else if (currentPhase == BossPhase.DAMAGED)
             {
-                // Movement
-                int distance = (int)Vector2.Distance(target, npc.Center);
-                if (charge)
-                {
-                    MoveTowards(npc, target - towardsPlayer, chargeSpeed, 30f);
-                }
-                else
-                {
-                    MoveTowards(npc, target - towardsPlayer * hoverDistanceFromPlayer, (float)(distance > 300 ? 13f : 7f), 30f);
-                }
-                npc.netUpdate = true;
-
+                follow = true;
                 if (aiPhase >= 150 && aiPhase < 151)
                 {
                     charge = true;
+                    chargeDirection = towardsPlayer;
                     int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 0f);
                     Main.projectile[pro].ai[0] = npc.whoAmI;
                     Main.projectile[pro].ai[1] = 0f;
                 }
-                if (aiPhase >= 350 && aiPhase < 351)
+                if (aiPhase >= 250 && aiPhase < 251)
                 {
-                    charge = false;
+                    chargeDirection = towardsPlayer;
                     int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 0f);
                     Main.projectile[pro].ai[0] = npc.whoAmI;
                     Main.projectile[pro].ai[1] = 1f;
+                }
+                if (aiPhase > 300)
+                {
                     aiPhase = 0;
+                    charge = false;
                 }
             }
 
@@ -190,6 +187,59 @@ namespace DesertMod.NPCs.Bosses
             else if (currentPhase == BossPhase.RAGED)
             {
 
+            }
+
+            // Execute behaviour accordign to flags
+            if (follow)
+            {
+                if (!hover) MoveTowards(npc, target - towardsPlayer, (float)(distance > fastSpeedDistance ? fastSpeed : normalSpeed), 30f);
+            }
+            if (hover)
+            {
+                MoveTowards(npc, target - towardsPlayer * hoverDistanceFromPlayer, (float)(distance > fastSpeedDistance ? fastSpeed : normalSpeed), 30f);
+            }
+            if (charge)
+            {
+                npc.velocity = chargeDirection * chargeSpeed;
+            }
+            if (shootPattern1)
+            {
+                Projectile.NewProjectile(bossCenter, towardsPlayer * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 0f);
+
+                // Workaround ghosting trail TODO: implement better method for this
+                for (int i = 1; i < 5; i++)
+                {
+                    Vector2 dir = towardsPlayer;
+                    dir.Normalize();
+                    Vector2 pos = bossCenter - dir * 15f * i;
+                    Projectile.NewProjectile(pos, towardsPlayer * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), 0, 0f);
+                }
+
+                shootPattern1 = false;
+            }
+            if (shootPattern2)
+            {
+                float angle = -10f / 180 * (float)Math.PI;
+                float increment = 5f / 180 * (float)Math.PI;
+                for (int i = 0; i < 5; i++)
+                {
+                    Vector2 dir = new Vector2(towardsPlayer.X * (float)Math.Cos(angle + i * increment) - towardsPlayer.Y * (float)Math.Sin(angle + i * increment),
+                        towardsPlayer.X * (float)Math.Sin(angle + i * increment) + towardsPlayer.Y * (float)Math.Cos(angle + i * increment));
+                    Projectile.NewProjectile(bossCenter, dir * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 0f);
+
+                    // Workaround ghosting trail TODO: implement better method for this
+                    for (int k = 1; k < 5; k++)
+                    {
+                        Vector2 pos = bossCenter - dir * 15f * k;
+                        Projectile.NewProjectile(pos, dir * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), 0, 0f);
+                    }
+                }
+                shootPattern2 = false;
+            }
+            if (shootPattern3)
+            {
+
+                shootPattern3 = false;
             }
         }
 
