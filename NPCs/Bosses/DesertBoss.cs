@@ -106,12 +106,18 @@ namespace DesertMod.NPCs.Bosses
                 }
             }
 
-            // Battle phases
+            // Boss phases
             Vector2 bossCenter = npc.Center;
             Vector2 towardsPlayer = target - bossCenter;
             towardsPlayer.Normalize();
 
-            // Boss phases
+
+            /* ___________________________________________________________________________
+             * 
+             * HEALTHY
+             * Boss HP bar abopve half
+             * ___________________________________________________________________________
+            */
             if (currentPhase == BossPhase.HEALTHY)
             {
                 // Movement
@@ -137,6 +143,13 @@ namespace DesertMod.NPCs.Bosses
                     aiPhase = 0;
                 }
             }
+
+            /* ___________________________________________________________________________
+             * 
+             * DAMAGED
+             * Boss HP bar below half but above third
+             * ___________________________________________________________________________
+            */
             else if (currentPhase == BossPhase.DAMAGED)
             {
                 // Movement
@@ -167,6 +180,13 @@ namespace DesertMod.NPCs.Bosses
                     aiPhase = 0;
                 }
             }
+
+            /* ___________________________________________________________________________
+             * 
+             * RAGED
+             * Boss HP bar below third
+             * ___________________________________________________________________________
+            */
             else if (currentPhase == BossPhase.RAGED)
             {
 
