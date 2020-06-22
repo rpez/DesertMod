@@ -31,7 +31,7 @@ namespace DesertMod.NPCs.Bosses
         private float fastSpeedDistance = 300f;
         private float normalSpeed = 7f;
         private float fastSpeed = 13f;
-        private float chargeSpeed = 30f;
+        private float chargeSpeed = 20f;
 
         // Attacks
         private int daggerDamage = 1;
@@ -163,16 +163,16 @@ namespace DesertMod.NPCs.Bosses
                     Main.projectile[pro].ai[0] = npc.whoAmI;
                     Main.projectile[pro].ai[1] = 0f;
                 }
-                if (aiPhase == 170) charge = false;
-                if (aiPhase == 250)
+                if (aiPhase == 200) charge = false;
+                if (aiPhase == 210)
                 {
+                    charge = true;
                     chargeDirection = towardsPlayer;
                     int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 0f);
                     Main.projectile[pro].ai[0] = npc.whoAmI;
                     Main.projectile[pro].ai[1] = 1f;
                 }
-                if (aiPhase == 270) charge = false;
-                if (aiPhase > 300)
+                if (aiPhase > 260)
                 {
                     aiPhase = 0;
                     charge = false;
