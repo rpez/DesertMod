@@ -135,14 +135,14 @@ namespace DesertMod.NPCs.Bosses
             {
                 follow = true;
                 // Dagger attack
-                if (aiPhase % 50 == 0)
+                if (aiPhase % 50 == 0 && npc.life < npc.lifeMax)
                 {
                     shootPattern1 = true;
                 }
                 if (aiPhase % 300 == 0)
                 {
                     hover = !hover;
-                    shootPattern2 = true;
+                    //shootPattern2 = true;
                 }
             }
 
@@ -207,15 +207,6 @@ namespace DesertMod.NPCs.Bosses
             {
                 Projectile.NewProjectile(bossCenter, towardsPlayer * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 0f);
 
-                // Workaround ghosting trail TODO: implement better method for this
-                for (int i = 1; i < 5; i++)
-                {
-                    Vector2 dir = towardsPlayer;
-                    dir.Normalize();
-                    Vector2 pos = bossCenter - dir * 15f * i;
-                    Projectile.NewProjectile(pos, towardsPlayer * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), 0, 0f);
-                }
-
                 shootPattern1 = false;
             }
             if (shootPattern2)
@@ -227,13 +218,6 @@ namespace DesertMod.NPCs.Bosses
                     Vector2 dir = new Vector2(towardsPlayer.X * (float)Math.Cos(angle + i * increment) - towardsPlayer.Y * (float)Math.Sin(angle + i * increment),
                         towardsPlayer.X * (float)Math.Sin(angle + i * increment) + towardsPlayer.Y * (float)Math.Cos(angle + i * increment));
                     Projectile.NewProjectile(bossCenter, dir * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 0f);
-
-                    // Workaround ghosting trail TODO: implement better method for this
-                    for (int k = 1; k < 5; k++)
-                    {
-                        Vector2 pos = bossCenter - dir * 15f * k;
-                        Projectile.NewProjectile(pos, dir * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), 0, 0f);
-                    }
                 }
                 shootPattern2 = false;
             }
