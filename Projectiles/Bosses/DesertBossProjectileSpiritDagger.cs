@@ -8,8 +8,6 @@ namespace DesertMod.Projectiles.Bosses
 {
     class DesertBossProjectileSpiritDagger : ModProjectile
     {
-        Player target;
-        Vector2 pos;
         int tailLength = 4;
 
         public override void SetStaticDefaults()
@@ -45,17 +43,6 @@ namespace DesertMod.Projectiles.Bosses
             Dust.NewDust(projectile.position, projectile.width, projectile.height, 217,
                 projectile.velocity.X * 0.25f, projectile.velocity.Y * 0.25f, 150, default(Color), 1f);
             Lighting.AddLight(projectile.Center, 0.3f, 1f, 1f);
-            if (target != null)
-            {
-                target.position = pos;
-            }
-        }
-
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            this.target = target;
-            pos = target.position;
-            base.OnHitPlayer(target, damage, crit);
         }
 
         public override bool PreDrawExtras(SpriteBatch spriteBatch)

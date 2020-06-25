@@ -25,6 +25,8 @@ namespace DesertMod.NPCs.Bosses
         private bool shootPattern1 = false;
         private bool shootPattern2 = false;
         private bool shootPattern3 = false;
+        private bool ray = false;
+        private bool rayActive = false;
 
         // Movement
         private float hoverDistanceFromPlayer = 300f;
@@ -57,7 +59,7 @@ namespace DesertMod.NPCs.Bosses
             npc.boss = true;
             npc.aiStyle = -1;
 
-            npc.lifeMax = 1000;
+            npc.lifeMax = 1500;
             npc.damage = 10;
             npc.defense = 10;
             npc.knockBackResist = 0f;
@@ -90,8 +92,6 @@ namespace DesertMod.NPCs.Bosses
 
             // Add "tick" to the phase counter of AI
             aiPhase++;
-
-            //WorldGen.PlaceTile((int)npc.position.X, (int)npc.position.Y, TileID.Sand, true, true);
 
             npc.TargetClosest(true);
             Player player = Main.player[npc.target];
@@ -133,6 +133,7 @@ namespace DesertMod.NPCs.Bosses
             */
             if (currentPhase == BossPhase.HEALTHY)
             {
+                ray = true;
                 follow = true;
                 // Dagger attack
                 if (aiPhase % 50 == 0 && npc.life < npc.lifeMax)
@@ -225,6 +226,17 @@ namespace DesertMod.NPCs.Bosses
             {
 
                 shootPattern3 = false;
+            }
+            if (!rayActive)
+            {
+                if (ray)
+                {
+                    int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileFreezeRay"), 0, 0f);
+                    Main.projectile[pro].ai[0] = npc.whoAmI;
+                    Main.projectile[pro].ai[1] = player.whoAmI;
+                    rayActive = true;
+                    ray = false;
+                }
             }
         }
 
