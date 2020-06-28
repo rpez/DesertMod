@@ -14,16 +14,18 @@ namespace DesertMod.Projectiles.Bosses
         Player target;
         NPC npc;
         Vector2 freezePos;
+        float rayPartRotationIncrement = 1f;
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Petrifying Ray");
+            Main.projFrames[projectile.type] = 8;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = 18;
-            projectile.height = 42;
+            projectile.width = 24;
+            projectile.height = 24;
             projectile.scale = 1.0f;
 
             projectile.aiStyle = 1;
@@ -59,7 +61,7 @@ namespace DesertMod.Projectiles.Bosses
             // Freeze the target movement
             if (target != null)
             {
-                target.position = freezePos;
+                //target.position = freezePos;
             }
 
             aiPhase++;
@@ -73,11 +75,11 @@ namespace DesertMod.Projectiles.Bosses
             float accumulated = 0f;
             bool reached = false;
 
-            Vector2 dir = projectile.Center - npc.Center;
+            Vector2 dir = target.Center - npc.Center;
             float distance = dir.Length();
             dir.Normalize();
             
-            Texture2D texture = ModContent.GetTexture("DesertMod/Projectiles/Bosses/DesertBossProjectileSpiritDagger");
+            Texture2D texture = ModContent.GetTexture("DesertMod/Projectiles/Bosses/DesertBossProjectileFreezeRay");
             float offset = 90f / 180f * (float)Math.PI;
 
             // Draw the sprites forming the tether
@@ -85,20 +87,22 @@ namespace DesertMod.Projectiles.Bosses
             {
                 // Accumulate
                 i++;
-                accumulated += texture.Height;
+                accumulated += projectile.height;
 
                 // Sprite parameters
-                Vector2 pos = projectile.Center - dir * texture.Height * i;
-                Rectangle? rec = new Rectangle?();
+                Vector2 pos = target.Center - dir * projectile.height * i;
+                Rectangle? rec = new Rectangle(0, i % 4 * projectile.height, projectile.height, projectile.height);
                 Color color = Color.White;
+                float rotOffset = Main.rand.Next(2) == 0 ? rayPartRotationIncrement * (float)aiPhase % 60f : -rayPartRotationIncrement * (float)aiPhase % 60f;
+                offset = offset + rotOffset;
                 float rotation = -(float)(Math.Atan2(-dir.Y, dir.X) - offset); // Rotate towards target
-                Vector2 origin = new Vector2(texture.Width * 0.5f, texture.Height * 0.5f);
+                Vector2 origin = new Vector2(projectile.height * 0.5f, projectile.width * 0.5f);
 
                 // Draw sprite
                 ((SpriteBatch)Main.spriteBatch).Draw(texture, pos - Main.screenPosition, rec, color, rotation, origin, 1f, SpriteEffects.None, 0.0f);
 
                 // If the tether is long enough stop drawing
-                if (accumulated + texture.Height > distance) reached = true;
+                if (accumulated + projectile.height > distance) reached = true;
             }
             return true;
         }
