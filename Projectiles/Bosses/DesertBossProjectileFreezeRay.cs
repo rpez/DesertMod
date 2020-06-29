@@ -24,6 +24,10 @@ namespace DesertMod.Projectiles.Bosses
         List<Vector2> rayPartMovementIncrement = new List<Vector2>();
         int rotationChangeCounter = 0;
         bool moveBack = false;
+        List<int> pulsePositions = new List<int>();
+        int pulseFrequency = 60;
+        int pulseTickSpeed = 2;
+        int pulseWidth = 3;
 
         public override void SetStaticDefaults()
         {
@@ -95,6 +99,22 @@ namespace DesertMod.Projectiles.Bosses
                 rotationChangeCounter = 0;
                 moveBack = !moveBack;
             }
+            // Move pulses forward with set frequence
+            if (aiPhase % pulseTickSpeed == 0)
+            {
+                for (int i = 0; i < pulsePositions.Count; i++)
+                {
+                    pulsePositions[i]++;
+                }
+            }
+            // Create [pulseWidth] new pulses
+            if (aiPhase % pulseFrequency == 0)
+            {
+                for (int i = 0; i < pulseWidth; i++)
+                {
+                    pulsePositions.Add(i);
+                }
+            }
             for (int i = 0; i < rayPartRotation.Count; i++)
             {
                 rayPartRotation[i] += rayPartRotationIncrement[i];
@@ -126,7 +146,14 @@ namespace DesertMod.Projectiles.Bosses
 
                 // Sprite parameters
                 Vector2 pos = target.Center - dir * projectile.height * i;
-                Rectangle? rec = new Rectangle(0, i % 4 * projectile.height, projectile.height, projectile.height);
+                int recOffset = 0;
+                if (pulsePositions.Contains(i))
+                {
+                    recOffset = 4 * projectile.height;
+                    Dust.NewDust(pos, projectile.width, projectile.height, 217, dir.X * 0.5f, dir.Y * 0.5f, 150, default(Color), 1f);
+                    Lighting.AddLight(pos, 0.3f, 1f, 1f);
+                }
+                Rectangle? rec = new Rectangle(0, i % 4 * projectile.height + recOffset, projectile.width, projectile.height);
                 Color color = Color.White;
                 float rotation = rayPartRotation[indexMod] / 180f * (float)Math.PI;
                 Vector2 origin = new Vector2(projectile.height * 0.5f, projectile.width * 0.5f);
@@ -136,6 +163,11 @@ namespace DesertMod.Projectiles.Bosses
 
                 // If the tether is long enough stop drawing
                 if (accumulated + projectile.height > distance) reached = true;
+            }
+            // Remove uneccessary pulses
+            for (int k = 0; k < pulsePositions.Count; k++)
+            {
+                if (pulsePositions[k] > i) pulsePositions.RemoveAt(k);
             }
             return true;
         }
