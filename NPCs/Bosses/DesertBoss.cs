@@ -29,7 +29,7 @@ namespace DesertMod.NPCs.Bosses
         private bool rayActive = false;
 
         // Movement
-        private float hoverDistanceFromPlayer = 300f;
+        private float hoverDistanceFromPlayer = 1000f;
         private float fastSpeedDistance = 300f;
         private float normalSpeed = 7f;
         private float fastSpeed = 13f;
