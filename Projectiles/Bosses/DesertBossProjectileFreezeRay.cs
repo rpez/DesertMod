@@ -137,7 +137,7 @@ namespace DesertMod.Projectiles.Bosses
             }
         }
 
-        public override bool PreDrawExtras(SpriteBatch spriteBatch)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             if (npc == null) return false; // If no target, do not draw ray
 
@@ -162,7 +162,7 @@ namespace DesertMod.Projectiles.Bosses
 
                 // Sprite parameters
                 Vector2 pos = target.Center - dir * projectile.height * i;
-                Color color = Color.White;
+                Color color = lightColor;
                 float rotation = rayPartRotation[indexMod] / 180f * (float)Math.PI;
                 Vector2 origin = new Vector2(projectile.height * 0.5f, projectile.width * 0.5f);
 
@@ -173,6 +173,7 @@ namespace DesertMod.Projectiles.Bosses
                     recOffset = 4 * projectile.height;
                     Dust.NewDust(pos, projectile.width, projectile.height, 217, dir.X * 0.5f, dir.Y * 0.5f, 150, default(Color), 1f);
                     Lighting.AddLight(pos, 0.3f, 1f, 1f);
+                    color = Color.White;
                 }
                 Rectangle? rec = new Rectangle(0, i % 4 * projectile.height + recOffset, projectile.width, projectile.height);
 
