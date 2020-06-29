@@ -12,22 +12,27 @@ namespace DesertMod.Projectiles.Bosses
     {
         int aiPhase = 0;
         
-
+        // Ray functional variables
         Player target;
         NPC npc;
         Vector2 freezePos;
 
-        int rayPartVariation = 10;
+        // RAY ANIMATION VARIABLES
+
+        int rayPartVariation = 10; // How many randomized values in the lists
+
+        // Lists for randomized values
         List<float> rayPartRotation = new List<float>();
         List<float> rayPartRotationIncrement = new List<float>();
         List<Vector2> rayPartMovement = new List<Vector2>();
         List<Vector2> rayPartMovementIncrement = new List<Vector2>();
-        int rotationChangeCounter = 0;
-        bool moveBack = false;
-        List<int> pulsePositions = new List<int>();
-        int pulseFrequency = 60;
-        int pulseTickSpeed = 2;
-        int pulseWidth = 3;
+
+        int rotationChangeCounter = 0; // Counter for randomization change
+        bool moveBack = false; // Prevents parts from going astray
+        List<int> pulsePositions = new List<int>(); // Pulse indexes
+        int pulseFrequency = 60; // How often pulses are fired
+        int pulseTickSpeed = 2; // How fast pulses are (less is faster)
+        int pulseWidth = 3; // How wide pulses are (in sprites)
 
         public override void SetStaticDefaults()
         {
@@ -84,7 +89,11 @@ namespace DesertMod.Projectiles.Bosses
                 //target.position = freezePos;
             }
 
-            aiPhase++;
+            aiPhase++; // Add AI tick
+
+            // RAY ANIMATION
+
+            // Check if it is time to get new randomized values
             rotationChangeCounter++;
             if (rotationChangeCounter >= 5)
             {
@@ -97,7 +106,7 @@ namespace DesertMod.Projectiles.Bosses
                 }
                 
                 rotationChangeCounter = 0;
-                moveBack = !moveBack;
+                moveBack = !moveBack; // Moveback prevents parts from going too much astray
             }
             // Move pulses forward with set frequence
             if (aiPhase % pulseTickSpeed == 0)
@@ -112,20 +121,27 @@ namespace DesertMod.Projectiles.Bosses
             {
                 for (int i = 0; i < pulseWidth; i++)
                 {
+                    // NOTE: if the pulse width is very big, spawning new wave might seem clunky visually as all of the glowing parts emerge immediately
                     pulsePositions.Add(i);
                 }
             }
+            // Rotate and move ray parts randomly
             for (int i = 0; i < rayPartRotation.Count; i++)
             {
+                // Rotate parts
                 rayPartRotation[i] += rayPartRotationIncrement[i];
+
+                // Move parts
+                // Moveback changes the movement to be opposite of the most recent one
                 rayPartMovement[i] += moveBack ? rayPartMovementIncrement[i] : -rayPartMovementIncrement[i];
             }
         }
 
         public override bool PreDrawExtras(SpriteBatch spriteBatch)
         {
-            if (npc == null) return false;
+            if (npc == null) return false; // If no target, do not draw ray
 
+            // Counting for how many sprites are needed
             int i = 0;
             float accumulated = 0f;
             bool reached = false;
@@ -146,6 +162,11 @@ namespace DesertMod.Projectiles.Bosses
 
                 // Sprite parameters
                 Vector2 pos = target.Center - dir * projectile.height * i;
+                Color color = Color.White;
+                float rotation = rayPartRotation[indexMod] / 180f * (float)Math.PI;
+                Vector2 origin = new Vector2(projectile.height * 0.5f, projectile.width * 0.5f);
+
+                // If the current part is glowing one, add offset to sprite rectangle
                 int recOffset = 0;
                 if (pulsePositions.Contains(i))
                 {
@@ -154,9 +175,6 @@ namespace DesertMod.Projectiles.Bosses
                     Lighting.AddLight(pos, 0.3f, 1f, 1f);
                 }
                 Rectangle? rec = new Rectangle(0, i % 4 * projectile.height + recOffset, projectile.width, projectile.height);
-                Color color = Color.White;
-                float rotation = rayPartRotation[indexMod] / 180f * (float)Math.PI;
-                Vector2 origin = new Vector2(projectile.height * 0.5f, projectile.width * 0.5f);
 
                 // Draw sprite
                 ((SpriteBatch)Main.spriteBatch).Draw(texture, pos - Main.screenPosition + rayPartMovement[indexMod], rec, color, rotation, origin, 1f, SpriteEffects.None, 0.0f);
@@ -169,6 +187,7 @@ namespace DesertMod.Projectiles.Bosses
             {
                 if (pulsePositions[k] > i) pulsePositions.RemoveAt(k);
             }
+
             return true;
         }
     }
