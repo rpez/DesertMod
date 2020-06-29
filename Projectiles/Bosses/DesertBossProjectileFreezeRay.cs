@@ -173,7 +173,7 @@ namespace DesertMod.Projectiles.Bosses
                     recOffset = 4 * projectile.height;
                     Dust.NewDust(pos, projectile.width, projectile.height, 217, dir.X * 0.5f, dir.Y * 0.5f, 150, default(Color), 1f);
                     Lighting.AddLight(pos, 0.3f, 1f, 1f);
-                    color = Color.White;
+                    color = Color.White; // Glowing parts are not affected by lighting
                 }
                 Rectangle? rec = new Rectangle(0, i % 4 * projectile.height + recOffset, projectile.width, projectile.height);
 
