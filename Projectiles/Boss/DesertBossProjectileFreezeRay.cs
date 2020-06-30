@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 
-namespace DesertMod.Projectiles.Bosses
+namespace DesertMod.Projectiles.Boss
 {
     class DesertBossProjectileFreezeRay : ModProjectile
     {
@@ -145,7 +145,7 @@ namespace DesertMod.Projectiles.Bosses
             float distance = dir.Length();
             dir.Normalize();
             
-            Texture2D texture = ModContent.GetTexture("DesertMod/Projectiles/Bosses/DesertBossProjectileFreezeRay");
+            Texture2D texture = ModContent.GetTexture("DesertMod/Projectiles/Boss/DesertBossProjectileFreezeRay");
 
             // Draw the sprites forming the tether
             while (!reached)

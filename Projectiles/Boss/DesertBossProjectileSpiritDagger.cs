@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DesertMod.Projectiles.Bosses
+namespace DesertMod.Projectiles.Boss
 {
     class DesertBossProjectileSpiritDagger : ModProjectile
     {
@@ -44,7 +44,7 @@ namespace DesertMod.Projectiles.Bosses
 
         public override bool PreDrawExtras(SpriteBatch spriteBatch)
         {
-            Texture2D texture = ModContent.GetTexture("DesertMod/Projectiles/Bosses/DesertBossProjectileSpiritDagger");
+            Texture2D texture = ModContent.GetTexture("DesertMod/Projectiles/Boss/DesertBossProjectileSpiritDagger");
             Vector2 dir = projectile.velocity;
             dir.Normalize();
 

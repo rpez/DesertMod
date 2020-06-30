@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using System;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DesertMod.Projectiles.Bosses
+namespace DesertMod.Projectiles.Boss
 {
     class DesertBossProjectileHalberd : CustomHitboxProjectile
     {

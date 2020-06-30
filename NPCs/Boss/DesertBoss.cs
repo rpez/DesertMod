@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 using DesertMod;
 using System;
 
-namespace DesertMod.NPCs.Bosses
+namespace DesertMod.NPCs.Boss
 {
     [AutoloadBossHead]
     public class DesertBoss : ModNPC
@@ -191,7 +191,7 @@ namespace DesertMod.NPCs.Bosses
 
             }
 
-            // Execute behaviour accordign to flags
+            // Execute behaviour according to flags
             if (follow)
             {
                 if (!hover) MoveTowards(npc, target - towardsPlayer, (float)(distance > fastSpeedDistance ? fastSpeed : normalSpeed), 30f);
