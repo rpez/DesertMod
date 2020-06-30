@@ -2,7 +2,6 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
 using Microsoft.Xna.Framework;
-using DesertMod;
 using System;
 
 namespace DesertMod.NPCs.Boss
@@ -25,8 +24,12 @@ namespace DesertMod.NPCs.Boss
         private bool shootPattern1 = false;
         private bool shootPattern2 = false;
         private bool shootPattern3 = false;
-        private bool ray = false;
-        private bool rayActive = false;
+        private bool glyphPetrifying = false;
+        private bool glyphPetrifyingActive = false;
+        private bool glyphCrushing = false;
+        private bool glyphCrushingActive = false;
+        private bool glyphBurning = false;
+        private bool glyphBurningActive = false;
 
         // Movement
         private float hoverDistanceFromPlayer = 1000f;
@@ -133,17 +136,17 @@ namespace DesertMod.NPCs.Boss
             */
             if (currentPhase == BossPhase.HEALTHY)
             {
-                ray = true;
                 follow = true;
                 // Dagger attack
                 if (aiPhase % 50 == 0 && npc.life < npc.lifeMax)
                 {
+                    glyphPetrifying = true;
                     shootPattern1 = true;
                 }
                 if (aiPhase % 300 == 0)
                 {
                     hover = !hover;
-                    //shootPattern2 = true;
+                    shootPattern2 = true;
                 }
             }
 
@@ -227,15 +230,33 @@ namespace DesertMod.NPCs.Boss
 
                 shootPattern3 = false;
             }
-            if (!rayActive)
+            if (!glyphPetrifyingActive)
             {
-                if (ray)
+                if (glyphPetrifying)
+                {
+                    int glyph = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, mod.NPCType("GlyphPetrifying"));
+                    Main.npc[glyph].ai[0] = npc.whoAmI;
+                    glyphPetrifyingActive = true;
+                    glyphPetrifying = false;
+                }
+            }
+            if (!glyphCrushingActive)
+            {
+                if (glyphCrushing)
+                {
+                    glyphCrushingActive = true;
+                    glyphCrushing = false;
+                }
+            }
+            if (!glyphBurningActive)
+            {
+                if (glyphBurning)
                 {
                     int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileFreezeRay"), 0, 0f);
                     Main.projectile[pro].ai[0] = npc.whoAmI;
                     Main.projectile[pro].ai[1] = player.whoAmI;
-                    rayActive = true;
-                    ray = false;
+                    glyphBurningActive = true;
+                    glyphBurning = false;
                 }
             }
         }

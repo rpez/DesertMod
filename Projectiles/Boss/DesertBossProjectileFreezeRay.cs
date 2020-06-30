@@ -10,29 +10,29 @@ namespace DesertMod.Projectiles.Boss
 {
     class DesertBossProjectileFreezeRay : ModProjectile
     {
-        int aiPhase = 0;
-        
+        private int aiPhase = 0;
+
         // Ray functional variables
-        Player target;
-        NPC npc;
-        Vector2 freezePos;
+        private Player target;
+        private NPC npc;
+        private Vector2 freezePos;
 
         // RAY ANIMATION VARIABLES
 
-        int rayPartVariation = 10; // How many randomized values in the lists
+        private int rayPartVariation = 10; // How many randomized values in the lists
 
         // Lists for randomized values
-        List<float> rayPartRotation = new List<float>();
-        List<float> rayPartRotationIncrement = new List<float>();
-        List<Vector2> rayPartMovement = new List<Vector2>();
-        List<Vector2> rayPartMovementIncrement = new List<Vector2>();
+        private List<float> rayPartRotation = new List<float>();
+        private List<float> rayPartRotationIncrement = new List<float>();
+        private List<Vector2> rayPartMovement = new List<Vector2>();
+        private List<Vector2> rayPartMovementIncrement = new List<Vector2>();
 
-        int rotationChangeCounter = 0; // Counter for randomization change
-        bool moveBack = false; // Prevents parts from going astray
-        List<int> pulsePositions = new List<int>(); // Pulse indexes
-        int pulseFrequency = 60; // How often pulses are fired
-        int pulseTickSpeed = 2; // How fast pulses are (less is faster)
-        int pulseWidth = 3; // How wide pulses are (in sprites)
+        private int rotationChangeCounter = 0; // Counter for randomization change
+        private bool moveBack = false; // Prevents parts from going astray
+        private List<int> pulsePositions = new List<int>(); // Pulse indexes
+        private int pulseFrequency = 60; // How often pulses are fired
+        private int pulseTickSpeed = 2; // How fast pulses are (less is faster)
+        private int pulseWidth = 3; // How wide pulses are (in sprites)
 
         public override void SetStaticDefaults()
         {
