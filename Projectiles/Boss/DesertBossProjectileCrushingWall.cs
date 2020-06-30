@@ -112,6 +112,7 @@ namespace DesertMod.Projectiles.Boss
             Vector2 dir = new Vector2(0f, 1f);
             Vector2 scaledSize = new Vector2(spriteScale[0], spriteScale[1]) * partScale;
 
+            // NOTE: workaround solution with sprite "hack"
             Texture2D texture = ModContent.GetTexture("DesertMod/Projectiles/Boss/DesertBossProjectileFreezeRay");
             Vector2 offset = -dir * scaledSize.Y * (float)wallHeight / 2f;
 
