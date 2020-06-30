@@ -34,11 +34,6 @@ namespace DesertMod.Projectiles.Bosses
             projectile.timeLeft = 500;
         }
 
-        public override Color? GetAlpha(Color lightColor)
-        {
-            return Color.White;
-        }
-
         public override void AI()
         {
             // Glow and dust trail

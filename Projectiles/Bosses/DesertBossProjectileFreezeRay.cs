@@ -58,11 +58,6 @@ namespace DesertMod.Projectiles.Bosses
             projectile.timeLeft = 50000;
         }
 
-        public override Color? GetAlpha(Color lightColor)
-        {
-            return Color.White;
-        }
-
         public override void AI()
         {
             // Initialize
