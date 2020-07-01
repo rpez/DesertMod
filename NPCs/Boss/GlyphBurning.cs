@@ -12,11 +12,14 @@ namespace DesertMod.NPCs.Boss
         // AI tick counter
         private int aiPhase = 0;
 
+        // List of all players
         private Player[] players;
 
-        private float projectileSpeed = 100f;
-        private int projectileDamage = 1;
-        private float projectileKnockback = 0f;
+        // Burn variables
+        private bool burnOn = false;
+        private float burnDistance = 2000f;
+        private int burnDamage = 10;
+        private int burnInterval = 200;
 
         public override void SetStaticDefaults()
         {
@@ -52,6 +55,7 @@ namespace DesertMod.NPCs.Boss
         {
             if (aiPhase == 0)
             {
+                // Find all players
                 players = new Player[Main.ActivePlayersCount];
                 int k = 0;
                 for (int i = 0; i < Main.player.Length; i++)
@@ -65,39 +69,49 @@ namespace DesertMod.NPCs.Boss
                     }
                 }
             }
+
+            // Toggle burn periodically
+            if (aiPhase % burnInterval == 0) burnOn = !burnOn;
             
-            foreach (Player player in players)
+            // If burning
+            if (burnOn)
             {
-                Vector2 dir = player.Center - npc.Center;
-                if (dir.Length() < 1000f)
+                // Raycast each player and deal dmg if hit
+                foreach (Player player in players)
                 {
-                    dir.Normalize();
-                    bool reached = false;
-                    bool hitWall = false;
-                    Vector2 curPos = npc.Center + dir * 25f;
-
-                    while (!reached && !hitWall)
+                    Vector2 dir = player.Center - npc.Center;
+                    if (dir.Length() < burnDistance)
                     {
-                        Tile tile = Main.tile[(int)curPos.X / 16, (int)curPos.Y / 16];
-                        if (tile != null && !Main.tileSolid[tile.type])
-                        {
-                            hitWall = true;
-                        }
-                        if ((npc.Center - curPos).Length() >= (npc.Center - player.Center).Length())
-                        {
-                            reached = true;
-                        }
-                        curPos += dir;
-                    }
+                        dir.Normalize();
+                        bool reached = false;
+                        bool hitWall = false;
+                        Vector2 curPos = npc.Center + dir * 25f;
 
-                    if (reached)
-                    {
-                        int direction = npc.Center.X > player.Center.X ? -1 : 1;
-                        player.Hurt(PlayerDeathReason.ByNPC(npc.whoAmI), 10, direction);
+                        // Basically check every tile between npc and player(s)
+                        while (!reached && !hitWall)
+                        {
+                            Tile tile = Main.tile[(int)curPos.X / 16, (int)curPos.Y / 16];
+                            if (tile != null && !Main.tileSolid[tile.type])
+                            {
+                                hitWall = true; // Wall hit
+                            }
+                            if ((npc.Center - curPos).Length() >= (npc.Center - player.Center).Length())
+                            {
+                                reached = true; // Player hit
+                            }
+                            curPos += dir;
+                        }
+
+                        // Deal damage if player is hit
+                        if (reached)
+                        {
+                            int direction = npc.Center.X > player.Center.X ? -1 : 1;
+                            player.Hurt(PlayerDeathReason.ByNPC(npc.whoAmI), burnDamage, direction);
+                        }
                     }
                 }
             }
-
+            
             aiPhase++;
         }
 
