@@ -10,7 +10,7 @@ namespace DesertMod.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spirit Dagger");
+            DisplayName.SetDefault("Debug Projectile");
         }
 
         public override void SetDefaults()

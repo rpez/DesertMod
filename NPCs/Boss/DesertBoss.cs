@@ -140,8 +140,7 @@ namespace DesertMod.NPCs.Boss
                 // Dagger attack
                 if (aiPhase % 50 == 0 && npc.life < npc.lifeMax)
                 {
-                    glyphCrushing = true;
-                    glyphPetrifying = true;
+                    glyphBurning = true;
                     shootPattern1 = true;
                 }
                 if (aiPhase % 300 == 0)
@@ -256,9 +255,7 @@ namespace DesertMod.NPCs.Boss
             {
                 if (glyphBurning)
                 {
-                    int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileFreezeRay"), 0, 0f);
-                    Main.projectile[pro].ai[0] = npc.whoAmI;
-                    Main.projectile[pro].ai[1] = player.whoAmI;
+                    int glyph = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, mod.NPCType("GlyphBurning"));
                     glyphBurningActive = true;
                     glyphBurning = false;
                 }

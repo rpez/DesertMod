@@ -3,6 +3,7 @@ using Terraria.ModLoader;
 using Terraria.ID;
 using Microsoft.Xna.Framework;
 using System;
+using Terraria.DataStructures;
 
 namespace DesertMod.NPCs.Boss
 {
@@ -11,15 +12,11 @@ namespace DesertMod.NPCs.Boss
         // AI tick counter
         private int aiPhase = 0;
 
-        private NPC boss;
+        private Player[] players;
 
-        private float rotationAroundBoss = 0;
-        private float distanceFromCenter = 300;
-        private float rotationSpeed = 1;
-
-        private int ray;
-        private bool shootRay = true;
-        private bool rayActive = false;
+        private float projectileSpeed = 100f;
+        private int projectileDamage = 1;
+        private float projectileKnockback = 0f;
 
         public override void SetStaticDefaults()
         {
@@ -53,37 +50,54 @@ namespace DesertMod.NPCs.Boss
 
         public override void AI()
         {
-            if (aiPhase == 0) boss = Main.npc[(int)npc.ai[0]];
-
-            npc.TargetClosest(true);
-
-            double rad = rotationAroundBoss * (Math.PI / 180);
-
-            npc.position.X = boss.Center.X - (int)(Math.Cos(rad) * distanceFromCenter) - npc.width / 2;
-            npc.position.Y = boss.Center.Y - (int)(Math.Sin(rad) * distanceFromCenter) - npc.height / 2;
-
-            // Shoot ray if it is not active
-            if (!rayActive)
+            if (aiPhase == 0)
             {
-                Player player = Main.player[npc.target];
-                if (shootRay)
+                players = new Player[Main.ActivePlayersCount];
+                int k = 0;
+                for (int i = 0; i < Main.player.Length; i++)
                 {
-                    ray = Projectile.NewProjectile(npc.Center, Vector2.Zero, mod.ProjectileType("DesertBossProjectileFreezeRay"), 0, 0f);
-                    Main.projectile[ray].ai[0] = npc.whoAmI;
-                    Main.projectile[ray].ai[1] = player.whoAmI;
-                    
-                    shootRay = false;
-                    rayActive = true;
+                    Player player = Main.player[i];
+                    if (player != null && player.active)
+                    {
+                        players[k] = player;
+                        k++;
+                        if (k >= players.Length) i = Main.player.Length;
+                    }
+                }
+            }
+            
+            foreach (Player player in players)
+            {
+                Vector2 dir = player.Center - npc.Center;
+                if (dir.Length() < 1000f)
+                {
+                    dir.Normalize();
+                    bool reached = false;
+                    bool hitWall = false;
+                    Vector2 curPos = npc.Center + dir * 25f;
+
+                    while (!reached && !hitWall)
+                    {
+                        Tile tile = Main.tile[(int)curPos.X / 16, (int)curPos.Y / 16];
+                        if (tile != null && !Main.tileSolid[tile.type])
+                        {
+                            hitWall = true;
+                        }
+                        if ((npc.Center - curPos).Length() >= (npc.Center - player.Center).Length())
+                        {
+                            reached = true;
+                        }
+                        curPos += dir;
+                    }
+
+                    if (reached)
+                    {
+                        int direction = npc.Center.X > player.Center.X ? -1 : 1;
+                        player.Hurt(PlayerDeathReason.ByNPC(npc.whoAmI), 10, direction);
+                    }
                 }
             }
 
-            // Kill ray when glyph is killed
-            if (rayActive && npc.life <= 0)
-            {
-                Main.projectile[ray].timeLeft = 0;
-            }
-
-            rotationAroundBoss += rotationSpeed;
             aiPhase++;
         }
 
