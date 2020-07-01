@@ -4,6 +4,7 @@ using Terraria.ID;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria.DataStructures;
+using Terraria.Graphics.Effects;
 
 namespace DesertMod.NPCs.Boss
 {
@@ -21,34 +22,15 @@ namespace DesertMod.NPCs.Boss
         private int burnDamage = 10;
         private int burnInterval = 200;
 
+        private int rippleCount = 3;
+        private int rippleSize = 5;
+        private int rippleSpeed = 15;
+        private float distortStrength = 100f;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Burning Glyph");
             Main.npcFrameCount[npc.type] = 1;
-        }
-
-        public override void SetDefaults()
-        {
-            npc.width = 36;
-            npc.height = 44;
-
-            npc.aiStyle = -1;
-
-            npc.lifeMax = 1500;
-            npc.damage = 10;
-            npc.defense = 10;
-            npc.knockBackResist = 0f;
-
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath1;
-        }
-
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
-        {
-            base.ScaleExpertStats(numPlayers, bossLifeScale);
         }
 
         public override void AI()
@@ -71,8 +53,22 @@ namespace DesertMod.NPCs.Boss
             }
 
             // Toggle burn periodically
-            if (aiPhase % burnInterval == 0) burnOn = !burnOn;
-            
+            if (aiPhase % burnInterval == 0)
+            {
+                burnOn = !burnOn;
+                if (Main.netMode != NetmodeID.Server && !Filters.Scene["GlyphBurning"].IsActive())
+                {
+                    if (burnOn) Filters.Scene.Activate("GlyphBurning", npc.Center).GetShader().UseColor(rippleCount, rippleSize, rippleSpeed).UseTargetPosition(npc.Center);
+                    else Filters.Scene["GlyphBurning"].Deactivate();
+                }
+            }
+
+            if (Main.netMode != NetmodeID.Server && Filters.Scene["GlyphBurning"].IsActive())
+            {
+                float progress = (180f + aiPhase) / 60f;
+                Filters.Scene["GlyphBurning"].GetShader().UseProgress(progress).UseOpacity(distortStrength * (1 - progress / 3f));
+            }
+
             // If burning
             if (burnOn)
             {

@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.UI;
 using DesertMod.UI;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria.Graphics.Effects;
+using Terraria.Graphics.Shaders;
+using Terraria.ID;
 
 namespace DesertMod
 {
@@ -26,6 +30,13 @@ namespace DesertMod
 
                 debugUI = new DebugUI();
                 debugUI.Activate();
+            }
+
+            if (Main.netMode != NetmodeID.Server)
+            {
+                Ref<Effect> filterRef = new Ref<Effect>(GetEffect("Effects/GlyphBurningFilter"));
+                Filters.Scene["GlyphBurning"] = new Filter(new ScreenShaderData(filterRef, "GlyphBurning"), EffectPriority.VeryHigh);
+                Filters.Scene["GlyphBurning"].Load();
             }
         }
 
