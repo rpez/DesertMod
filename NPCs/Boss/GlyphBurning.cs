@@ -20,12 +20,14 @@ namespace DesertMod.NPCs.Boss
         private bool burnOn = false;
         private float burnDistance = 2000f;
         private int burnDamage = 10;
-        private int burnInterval = 200;
+        private int burnInterval = 500;
 
         private int rippleCount = 3;
         private int rippleSize = 5;
         private int rippleSpeed = 15;
         private float distortStrength = 100f;
+
+        private int filterTimer = 0;
 
         public override void SetStaticDefaults()
         {
@@ -56,18 +58,25 @@ namespace DesertMod.NPCs.Boss
             if (aiPhase % burnInterval == 0)
             {
                 burnOn = !burnOn;
-                if (Main.netMode != NetmodeID.Server && !Filters.Scene["GlyphBurning"].IsActive())
+                if (Main.netMode != NetmodeID.Server)
                 {
-                    if (burnOn) Filters.Scene.Activate("GlyphBurning", npc.Center).GetShader().UseColor(rippleCount, rippleSize, rippleSpeed).UseTargetPosition(npc.Center);
-                    else Filters.Scene["GlyphBurning"].Deactivate();
+                    if (burnOn && !Filters.Scene["GlyphBurning"].IsActive())
+                    {
+                        Filters.Scene.Activate("GlyphBurning").GetShader().UseTargetPosition(npc.Center);
+                        filterTimer = burnInterval;
+                    }
+                    else if (!burnOn && Filters.Scene["GlyphBurning"].IsActive())
+                    {
+                        Filters.Scene["GlyphBurning"].Deactivate();
+                    }
                 }
             }
 
-            if (Main.netMode != NetmodeID.Server && Filters.Scene["GlyphBurning"].IsActive())
-            {
-                float progress = (180f + aiPhase) / 60f;
-                Filters.Scene["GlyphBurning"].GetShader().UseProgress(progress).UseOpacity(distortStrength * (1 - progress / 3f));
-            }
+            //if (Main.netMode != NetmodeID.Server && Filters.Scene["GlyphBurning"].IsActive())
+            //{
+            //    float progress = (float)filterTimer;
+            //    Filters.Scene["GlyphBurning"].GetShader().UseProgress(progress).UseOpacity(distortStrength * (1 - progress / 3f));
+            //}
 
             // If burning
             if (burnOn)
@@ -109,6 +118,7 @@ namespace DesertMod.NPCs.Boss
             }
             
             aiPhase++;
+            filterTimer--;
         }
 
         public override void FindFrame(int frameHeight)
