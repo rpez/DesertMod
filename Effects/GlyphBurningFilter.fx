@@ -29,10 +29,10 @@ float4 GlyphBurning(float2 coords : TEXCOORD0) : COLOR0
     float2 targetCoords = (uTargetPosition - uScreenPosition) / uScreenResolution;
     float2 distVec = (coords - targetCoords) * float2 (uScreenResolution.x / uScreenResolution.y, 1);
     float distance = length(distVec);
-    float multiplier = (1.0 - distance);
+    float multiplier = (2.0 - distance);
     if (multiplier < 0.0) multiplier = 0.0;
 
-    float oe = 1.0 + multiplier * 20;
+    float oe = 1.0 + multiplier;
     return float4 (color.r * oe, color.g * oe, color.b * oe, color.a);
 }
 
