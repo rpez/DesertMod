@@ -20,23 +20,22 @@ float uSaturation;
 float4 uSourceRect;
 float2 uZoom;
 
-float distort = 500;
+
 
 float4 GlyphBurningDistort(float2 coords : TEXCOORD0) : COLOR0
 {
-    float2 targetCoords = (uTargetPosition - uScreenPosition) / uScreenResolution;
-    float2 distVec = (coords - targetCoords) * float2 (uScreenResolution.x / uScreenResolution.y, 1);
-    float distance = length(distVec);
+    float2 targetCoords = (uTargetPosition - uScreenPosition) / uScreenResolution;;
+    float distance = length(coords - targetCoords);
 
     float multiplier = uIntensity - distance;
-    if (multiplier < 0.0) multiplier = 0.0;
 
-    float2 size = float2 (0.128, 0.128);
-
-    float factor = sin(length(float2 (coords.x + uProgress, coords.y) - size) * distort)
-        + sin(length(coords - size) * distort)
-        + sin(length(float2 (coords.x, coords.y + uProgress) - size) * distort);
-    coords.xy = coords.xy + ((factor / distort));
+    if (multiplier >= 0.01) {
+        float2 size = float2 (0.13, 0.13);
+        float distort = 500.0 / multiplier;
+        float factor = sin(length(float2 (coords.x + uProgress, coords.y) - size) * distort)
+            + sin(length(float2 (coords.x, coords.y + uProgress) - size) * distort);
+        coords.xy += ((factor / distort));
+    }
 
     return tex2D(uImage0, coords);
 }
