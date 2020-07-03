@@ -22,11 +22,6 @@ namespace DesertMod.NPCs.Boss
         private int burnDamage = 10;
         private int burnInterval = 500;
 
-        private int rippleCount = 3;
-        private int rippleSize = 5;
-        private int rippleSpeed = 15;
-        private float distortStrength = 100f;
-
         private int filterTimer = 0;
         private int filterBuildupTime = 200;
 
@@ -75,8 +70,12 @@ namespace DesertMod.NPCs.Boss
 
             if (Main.netMode != NetmodeID.Server && Filters.Scene["GlyphBurning"].IsActive())
             {
-                float progress = (float)filterTimer / (float)filterBuildupTime;
-                Filters.Scene["GlyphBurning"].GetShader().UseProgress(progress);
+                float progress = (float)filterTimer;
+                float buildup = (float)filterTimer / (float)filterBuildupTime;
+                if (buildup > 1f) buildup = 1f;
+
+                // Intensity is the buildup of the overexposure glow, progress is just time
+                Filters.Scene["GlyphBurning"].GetShader().UseIntensity(buildup).UseProgress(progress);
             }
 
             // If burning
@@ -97,7 +96,7 @@ namespace DesertMod.NPCs.Boss
                         while (!reached && !hitWall)
                         {
                             Tile tile = Main.tile[(int)curPos.X / 16, (int)curPos.Y / 16];
-                            if (tile != null && !Main.tileSolid[tile.type])
+                            if (tile != null && Main.tileSolid[tile.type] && tile.collisionType == 1)
                             {
                                 hitWall = true; // Wall hit
                             }
@@ -105,7 +104,7 @@ namespace DesertMod.NPCs.Boss
                             {
                                 reached = true; // Player hit
                             }
-                            curPos += dir;
+                            curPos += dir * 0.5f;
                         }
 
                         // Deal damage if player is hit
