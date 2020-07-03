@@ -56,26 +56,29 @@ namespace DesertMod.NPCs.Boss
                 burnOn = !burnOn;
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    if (burnOn && !Filters.Scene["GlyphBurning"].IsActive())
+                    if (burnOn && !Filters.Scene["GlyphBurningGlow"].IsActive() && !Filters.Scene["GlyphBurningDistort"].IsActive())
                     {
-                        Filters.Scene.Activate("GlyphBurning", npc.Center).GetShader().UseTargetPosition(npc.Center);
+                        Filters.Scene.Activate("GlyphBurningGlow", npc.Center).GetShader().UseTargetPosition(npc.Center);
+                        Filters.Scene.Activate("GlyphBurningDistort", npc.Center).GetShader().UseTargetPosition(npc.Center);
                         filterTimer = 0;
                     }
-                    else if (!burnOn && Filters.Scene["GlyphBurning"].IsActive())
+                    else if (!burnOn && Filters.Scene["GlyphBurningGlow"].IsActive() && Filters.Scene["GlyphBurningDistort"].IsActive())
                     {
-                        Filters.Scene["GlyphBurning"].Deactivate();
+                        Filters.Scene["GlyphBurningGlow"].Deactivate();
+                        Filters.Scene["GlyphBurningDistort"].Deactivate();
                     }
                 }
             }
 
-            if (Main.netMode != NetmodeID.Server && Filters.Scene["GlyphBurning"].IsActive())
+            if (Main.netMode != NetmodeID.Server && Filters.Scene["GlyphBurningGlow"].IsActive() && Filters.Scene["GlyphBurningDistort"].IsActive())
             {
                 float progress = (float)filterTimer;
                 float buildup = (float)filterTimer / (float)filterBuildupTime;
                 if (buildup > 1f) buildup = 1f;
 
                 // Intensity is the buildup of the overexposure glow, progress is just time
-                Filters.Scene["GlyphBurning"].GetShader().UseIntensity(buildup).UseProgress(progress);
+                Filters.Scene["GlyphBurningGlow"].GetShader().UseIntensity(buildup).UseProgress(progress);
+                Filters.Scene["GlyphBurningDistort"].GetShader().UseIntensity(buildup).UseProgress(progress);
             }
 
             // If burning

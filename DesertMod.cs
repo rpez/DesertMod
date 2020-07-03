@@ -34,9 +34,13 @@ namespace DesertMod
 
             if (Main.netMode != NetmodeID.Server)
             {
-                Ref<Effect> filterRef = new Ref<Effect>(GetEffect("Effects/GlyphBurningFilter"));
-                Filters.Scene["GlyphBurning"] = new Filter(new ScreenShaderData(filterRef, "GlyphBurning"), EffectPriority.VeryHigh);
-                Filters.Scene["GlyphBurning"].Load();
+                Ref<Effect> filterRef = new Ref<Effect>(GetEffect("Effects/GlyphBurningGlow"));
+                Filters.Scene["GlyphBurningGlow"] = new Filter(new ScreenShaderData(filterRef, "GlyphBurningGlow"), EffectPriority.VeryHigh);
+                Filters.Scene["GlyphBurningGlow"].Load();
+
+                Ref<Effect> filterRef2 = new Ref<Effect>(GetEffect("Effects/GlyphBurningDistort"));
+                Filters.Scene["GlyphBurningDistort"] = new Filter(new ScreenShaderData(filterRef2, "GlyphBurningDistort"), EffectPriority.VeryHigh);
+                Filters.Scene["GlyphBurningDistort"].Load();
             }
         }
 

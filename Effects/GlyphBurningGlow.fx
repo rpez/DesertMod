@@ -20,7 +20,7 @@ float uSaturation;
 float4 uSourceRect;
 float2 uZoom;
 
-float4 GlyphBurning(float2 coords : TEXCOORD0) : COLOR0
+float4 GlyphBurningGlow(float2 coords : TEXCOORD0) : COLOR0
 {
     float4 color = tex2D(uImage0, coords);
     if (!any(color))
@@ -39,8 +39,8 @@ float4 GlyphBurning(float2 coords : TEXCOORD0) : COLOR0
 
 technique Technique1
 {
-    pass GlyphBurning
+    pass GlyphBurningGlow
     {
-        PixelShader = compile ps_2_0 GlyphBurning();
+        PixelShader = compile ps_2_0 GlyphBurningGlow();
     }
 }
