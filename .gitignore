@@ -358,3 +358,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Other files
+/Effects/fxcompiler.exe
+/Effects/Microsoft.Xna.Framework.Content.Pipeline.dll
+/Effects/Microsoft.Xna.Framework.Content.Pipeline.EffectImporter.dll
