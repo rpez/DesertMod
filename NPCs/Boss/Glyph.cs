@@ -12,6 +12,7 @@ namespace DesertMod.NPCs.Boss
         public int aiPhase = 0;
 
         public NPC boss;
+        public bool isActive = true;
 
         public override void SetDefaults()
         {
@@ -45,6 +46,12 @@ namespace DesertMod.NPCs.Boss
         public override void AI()
         {
             if (aiPhase == 0) boss = Main.npc[(int)npc.ai[0]];
+
+            if ((int)npc.ai[1] == 0)
+            {
+                isActive = false;
+            }
+            else isActive = true;
 
             aiPhase++;
         }

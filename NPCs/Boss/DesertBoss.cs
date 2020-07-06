@@ -25,13 +25,16 @@ namespace DesertMod.NPCs.Boss
         private bool shootPattern1 = false;
         private bool shootPattern2 = false;
         private bool shootPattern3 = false;
-        private bool glyphPetrifying = false;
+
+        private int glyphPetrifying = -1;
         private bool glyphPetrifyingActive = false;
         private bool glyphPetrifyingDead = false;
-        private bool glyphCrushing = false;
+
+        private int glyphCrushing = -1;
         private bool glyphCrushingActive = false;
         private bool glyphCrushingDead = false;
-        private bool glyphBurning = false;
+
+        private int glyphBurning = -1;
         private bool glyphBurningActive = false;
         private bool glyphBurningDead = false;
 
@@ -93,14 +96,29 @@ namespace DesertMod.NPCs.Boss
 
         public override void AI()
         {
-            if (aiPhase == 0) DesertMod.instance.ShowDebugUI();
+            npc.netAlways = true;
 
-            if (npc.life >= npc.lifeMax / 2) currentPhase = BossPhase.HEALTHY;
-            else if (npc.life <= npc.lifeMax / 2 && npc.life >= npc.lifeMax / 3) currentPhase = BossPhase.DAMAGED;
-            else currentPhase = BossPhase.RAGED;
+            // Initialize
+            if (aiPhase == 0)
+            {
+                DesertMod.instance.ShowDebugUI();
 
-            // Add "tick" to the phase counter of AI
-            aiPhase++;
+                glyphPetrifying = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, mod.NPCType("GlyphPetrifying"));
+                Main.npc[glyphPetrifying].ai[0] = npc.whoAmI;
+                Main.npc[glyphPetrifying].ai[1] = 0;
+                glyphCrushing = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, mod.NPCType("GlyphCrushing"));
+                Main.npc[glyphCrushing].ai[0] = npc.whoAmI;
+                Main.npc[glyphCrushing].ai[1] = 0;
+                glyphBurning = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, mod.NPCType("GlyphBurning"));
+                Main.npc[glyphBurning].ai[0] = npc.whoAmI;
+                Main.npc[glyphBurning].ai[1] = 0;
+            }
+
+            // Check boss phase
+            CheckBossPhase();
+
+            // Check glyph states
+            CheckGlyphStatus();
 
             npc.TargetClosest(true);
             Player player = Main.player[npc.target];
@@ -108,7 +126,6 @@ namespace DesertMod.NPCs.Boss
 
             // NPC initial rotation
             npc.rotation = 0.0f;
-            npc.netAlways = true;
             npc.TargetClosest(true);
 
             // Prevents overheal
@@ -127,7 +144,8 @@ namespace DesertMod.NPCs.Boss
                 }
             }
 
-            // Boss phases
+
+            // BEHAVIOR
             Vector2 bossCenter = npc.Center;
             Vector2 towardsPlayer = target - bossCenter;
             towardsPlayer.Normalize();
@@ -269,51 +287,9 @@ namespace DesertMod.NPCs.Boss
 
                 shootPattern3 = false;
             }
-            if (glyphPetrifying)
-            {
-                if (!glyphPetrifyingActive && !glyphPetrifyingDead)
-                {
-                    int glyph = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, mod.NPCType("GlyphPetrifying"));
-                    Main.npc[glyph].ai[0] = npc.whoAmI;
-                    Main.npc[glyph].ai[1] = 1;
-                    glyphPetrifyingActive = true;
-                    glyphPetrifying = false;
-                }
-                else
-                {
-                    glyphPetrifying = false;
-                }
-            }
-            if (glyphCrushing)
-            {
-                if (!glyphCrushingActive && !glyphCrushingDead)
-                {
-                    int glyph = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, mod.NPCType("GlyphCrushing"));
-                    Main.npc[glyph].ai[0] = npc.whoAmI;
-                    Main.npc[glyph].ai[1] = 1;
-                    Main.npc[glyph].ai[2] = npc.Center.X;
-                    Main.npc[glyph].ai[3] = npc.Center.Y;
-                    glyphCrushingActive = true;
-                    glyphCrushing = false;
-                }
-                else
-                {
-                    glyphCrushing = false;
-                }
-            }
-            if (glyphBurning)
-            {
-                if (!glyphBurningActive && !glyphBurningDead)
-                {
-                    int glyph = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, mod.NPCType("GlyphBurning"));
-                    glyphBurningActive = true;
-                    glyphBurning = false;
-                }
-                else
-                {
-                    glyphBurning = false;
-                }
-            }
+
+            // Add "tick" to the phase counter of AI
+            aiPhase++;
         }
 
         public override void FindFrame(int frameHeight)
@@ -357,21 +333,80 @@ namespace DesertMod.NPCs.Boss
         // Toggles glyphs
         private void ToggleGlyph(bool petrifying, bool crushing, bool burning)
         {
+            // Petrify glyph
             if (petrifying)
             {
-                if (!glyphPetrifyingActive && !glyphPetrifyingDead) glyphPetrifying = true;
-                else glyphPetrifyingActive = false;
+                if (!glyphPetrifyingActive && !glyphPetrifyingDead)
+                {
+                    Main.npc[glyphPetrifying].ai[1] = 1;
+                    glyphPetrifyingActive = true;
+                }
             }
+            else if (glyphPetrifyingActive)
+            {
+                Main.npc[glyphPetrifying].ai[1] = 0;
+                glyphPetrifyingActive = false;
+            }
+
+            // Crushing glyph
             if (crushing)
             {
-                if (!glyphCrushingActive && !glyphCrushingDead) glyphCrushing = true;
-                else glyphCrushingActive = false;
+                if (!glyphCrushingActive && !glyphCrushingDead)
+                {
+                    Main.npc[glyphCrushing].ai[1] = 1;
+                    Main.npc[glyphCrushing].ai[2] = npc.Center.X;
+                    Main.npc[glyphCrushing].ai[3] = npc.Center.Y;
+                    glyphCrushingActive = true;
+                }
             }
+            else if (glyphCrushingActive) 
+            {
+                Main.npc[glyphCrushing].ai[1] = 0;
+                glyphCrushingActive = false;
+            }
+
+            // Burning glyph
             if (burning)
             {
-                if (!glyphBurningActive && !glyphBurningDead) glyphBurning = true;
-                else glyphBurningActive = false;
+                if (!glyphBurningActive && !glyphBurningDead)
+                {
+                    Main.npc[glyphBurning].ai[1] = 1;
+                    glyphBurningActive = true;
+                }
             }
+            else if (glyphBurningActive)
+            {
+                Main.npc[glyphBurning].ai[1] = 0;
+                glyphBurningActive = false;
+            }
+        }
+
+        // Check glyph states
+        private void CheckGlyphStatus()
+        {
+            if (!glyphPetrifyingDead && Main.npc[glyphPetrifying].life <= 0)
+            {
+                glyphPetrifyingDead = true;
+                glyphPetrifyingActive = false;
+            }
+            if (!glyphCrushingDead && Main.npc[glyphCrushing].life <= 0)
+            {
+                glyphCrushingDead = true;
+                glyphCrushingActive = false;
+            }
+            if (!glyphBurningDead && Main.npc[glyphBurning].life <= 0)
+            {
+                glyphBurningDead = true;
+                glyphBurningActive = false;
+            }
+        }
+
+        // Check boss phase
+        private void CheckBossPhase()
+        {
+            if (npc.life >= npc.lifeMax / 2) currentPhase = BossPhase.HEALTHY;
+            else if (npc.life <= npc.lifeMax / 2 && npc.life >= npc.lifeMax / 3) currentPhase = BossPhase.DAMAGED;
+            else currentPhase = BossPhase.RAGED;
         }
 
         // Set up values for charge
