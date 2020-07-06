@@ -28,7 +28,7 @@ namespace DesertMod.NPCs.Boss
             npc.height = 44;
 
             npc.aiStyle = -1;
-            npc.boss = true;
+            //npc.boss = true;
 
             npc.lifeMax = 1500;
             npc.damage = 10;
@@ -79,10 +79,11 @@ namespace DesertMod.NPCs.Boss
 
             if ((int)npc.ai[1] == 0)
             {
+                Vector2 targetPos = boss.Center + attachPos;
                 isActive = false;
                 if (!attached)
                 {
-                    Vector2 move = boss.Center + attachPos - npc.Center;
+                    Vector2 move = targetPos - npc.Center;
                     float length = move.Length();
                     if (length > returnSpeed)
                     {
@@ -95,15 +96,15 @@ namespace DesertMod.NPCs.Boss
                         move *= returnSpeed / length;
                     }
                     npc.velocity = move;
-                    if (Vector2.Distance(npc.Center, attachPos) <= 0.1f) attached = true;
+                    if (Vector2.Distance(npc.Center, targetPos) <= 1f) attached = true;
                 }
                 else
                 {
                     foreach (int id in playerIDs)
                     {
-                        npc.immune[id] = 10;
+                        npc.immune[id] = 2;
                     }
-                    npc.Center = boss.Center + attachPos;
+                    npc.Center = targetPos;
                 }
             }
             else
