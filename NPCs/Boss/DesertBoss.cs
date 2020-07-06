@@ -106,12 +106,18 @@ namespace DesertMod.NPCs.Boss
                 glyphPetrifying = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, mod.NPCType("GlyphPetrifying"));
                 Main.npc[glyphPetrifying].ai[0] = npc.whoAmI;
                 Main.npc[glyphPetrifying].ai[1] = 0;
+                Main.npc[glyphPetrifying].ai[2] = -100f;
+                Main.npc[glyphPetrifying].ai[3] = -100f;
                 glyphCrushing = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, mod.NPCType("GlyphCrushing"));
                 Main.npc[glyphCrushing].ai[0] = npc.whoAmI;
                 Main.npc[glyphCrushing].ai[1] = 0;
+                Main.npc[glyphCrushing].ai[2] = 0f;
+                Main.npc[glyphCrushing].ai[3] = -100f;
                 glyphBurning = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, mod.NPCType("GlyphBurning"));
                 Main.npc[glyphBurning].ai[0] = npc.whoAmI;
                 Main.npc[glyphBurning].ai[1] = 0;
+                Main.npc[glyphBurning].ai[2] = 100f;
+                Main.npc[glyphBurning].ai[3] = -100f;
             }
 
             // Check boss phase
@@ -284,7 +290,6 @@ namespace DesertMod.NPCs.Boss
             }
             if (shootPattern3)
             {
-
                 shootPattern3 = false;
             }
 
@@ -354,8 +359,8 @@ namespace DesertMod.NPCs.Boss
                 if (!glyphCrushingActive && !glyphCrushingDead)
                 {
                     Main.npc[glyphCrushing].ai[1] = 1;
-                    Main.npc[glyphCrushing].ai[2] = npc.Center.X;
-                    Main.npc[glyphCrushing].ai[3] = npc.Center.Y;
+                    Main.npc[glyphCrushing].ai[4] = npc.Center.X;
+                    Main.npc[glyphCrushing].ai[5] = npc.Center.Y;
                     glyphCrushingActive = true;
                 }
             }

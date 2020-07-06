@@ -48,7 +48,9 @@ namespace DesertMod.NPCs.Boss
 
         public override void AI()
         {
+            // Run base AI and if not active do not execute glyph specific AI
             base.AI();
+            if (!isActive) return;
 
             npc.TargetClosest(true);
 

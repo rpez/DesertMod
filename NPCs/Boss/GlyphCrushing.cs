@@ -49,7 +49,11 @@ namespace DesertMod.NPCs.Boss
 
         public override void AI()
         {
-            if (aiPhase == 0) target = new Vector2(npc.ai[2], npc.ai[3]);
+            // Run base AI and if not active do not execute glyph specific AI
+            base.AI();
+            if (!isActive) return;
+
+            if (aiPhase == 0) target = new Vector2(npc.ai[4], npc.ai[5]);
 
             // Summon walls if they are not active
             if (!wallsActive)

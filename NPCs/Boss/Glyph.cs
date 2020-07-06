@@ -12,7 +12,9 @@ namespace DesertMod.NPCs.Boss
         public int aiPhase = 0;
 
         public NPC boss;
+        public Vector2 attachPos;
         public bool isActive = true;
+        public bool attached = true;
 
         public override void SetDefaults()
         {
@@ -45,13 +47,31 @@ namespace DesertMod.NPCs.Boss
 
         public override void AI()
         {
-            if (aiPhase == 0) boss = Main.npc[(int)npc.ai[0]];
+            if (aiPhase == 0)
+            {
+                boss = Main.npc[(int)npc.ai[0]];
+                attachPos = new Vector2(npc.ai[2], npc.ai[3]);
+            }
 
             if ((int)npc.ai[1] == 0)
             {
                 isActive = false;
+                if (!attached)
+                {
+
+                }
+                else
+                {
+                    npc.immortal = true;
+                    npc.Center = boss.Center + attachPos;
+                }
             }
-            else isActive = true;
+            else
+            {
+                isActive = true;
+                npc.immortal = false;
+                attached = false;
+            }
 
             aiPhase++;
         }
