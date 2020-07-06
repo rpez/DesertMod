@@ -34,16 +34,7 @@ namespace DesertMod.NPCs.Boss
             base.AI();
             if (!isActive)
             {
-                if (leftWall >= 0)
-                {
-                    Main.projectile[leftWall].timeLeft = 0;
-                    leftWall = -1;
-                }
-                if (rightWall >= 0)
-                {
-                    Main.projectile[rightWall].timeLeft = 0;
-                    rightWall = -1;
-                }
+                DeactivateWalls();
                 return;
             }
 
@@ -62,19 +53,36 @@ namespace DesertMod.NPCs.Boss
                 wallsActive = true;
             }
 
-            // Kill walls when glyph is killed
-            if (wallsActive && npc.life <= 0)
-            {
-                Main.projectile[leftWall].timeLeft = 0;
-                Main.projectile[rightWall].timeLeft = 0;
-            }
-
             aiPhase++;
+        }
+
+        public override bool CheckDead()
+        {
+            if (npc.life <= 0)
+            {
+                DeactivateWalls();
+            }
+            return base.CheckDead();
         }
 
         public override void FindFrame(int frameHeight)
         {
             base.FindFrame(frameHeight);
+        }
+
+        private void DeactivateWalls()
+        {
+            if (leftWall >= 0)
+            {
+                Main.projectile[leftWall].timeLeft = 0;
+                leftWall = -1;
+            }
+            if (rightWall >= 0)
+            {
+                Main.projectile[rightWall].timeLeft = 0;
+                rightWall = -1;
+            }
+            wallsActive = false;
         }
     }
 }

@@ -33,11 +33,7 @@ namespace DesertMod.NPCs.Boss
             base.AI();
             if (!isActive)
             {
-                if (ray >= 0)
-                {
-                    Main.projectile[ray].timeLeft = 0;
-                    ray = -1;
-                }
+                DeactivateRay();
                 return;
             }
 
@@ -63,19 +59,32 @@ namespace DesertMod.NPCs.Boss
                 }
             }
 
-            // Kill ray when glyph is killed
-            if (rayActive && npc.life <= 0)
-            {
-                Main.projectile[ray].timeLeft = 0;
-            }
-
             rotationAroundBoss += rotationSpeed;
             aiPhase++;
+        }
+
+        public override bool CheckDead()
+        {
+            if (npc.life <= 0)
+            {
+                DeactivateRay();
+            }
+            return base.CheckDead();
         }
 
         public override void FindFrame(int frameHeight)
         {
             base.FindFrame(frameHeight);
+        }
+
+        private void DeactivateRay()
+        {
+            if (rayActive && ray >= 0)
+            {
+                Main.projectile[ray].timeLeft = 0;
+                ray = -1;
+                rayActive = false;
+            }
         }
     }
 }

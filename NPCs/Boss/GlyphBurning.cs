@@ -32,11 +32,6 @@ namespace DesertMod.NPCs.Boss
             base.AI();
             if (!isActive)
             {
-                if (burnOn)
-                {
-                    DeactivateShaders();
-                    burnOn = false;
-                }
                 return;
             }
 
@@ -135,6 +130,19 @@ namespace DesertMod.NPCs.Boss
         public override void FindFrame(int frameHeight)
         {
             base.FindFrame(frameHeight);
+        }
+
+        public override bool CheckDead()
+        {
+            if (npc.life <= 0)
+            {
+                if (burnOn)
+                {
+                    DeactivateShaders();
+                    burnOn = false;
+                }
+            }
+            return base.CheckDead();
         }
     }
 }

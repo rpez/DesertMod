@@ -28,7 +28,6 @@ namespace DesertMod.NPCs.Boss
             npc.height = 44;
 
             npc.aiStyle = -1;
-            //npc.boss = true;
 
             npc.lifeMax = 1500;
             npc.damage = 10;
@@ -40,6 +39,8 @@ namespace DesertMod.NPCs.Boss
 
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
+
+            music = mod.GetSoundSlot(SoundType.Music, "Sounds/Music/DesertBossMusic");
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
