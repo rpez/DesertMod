@@ -10,9 +10,6 @@ namespace DesertMod.NPCs.Boss
 {
     class GlyphBurning : Glyph
     {
-        // List of all players
-        private Player[] players;
-
         // Burn variables
         private bool burnOn = false;
         private float burnDistance = 2000f;
@@ -34,23 +31,6 @@ namespace DesertMod.NPCs.Boss
             // Run base AI and if not active do not execute glyph specific AI
             base.AI();
             if (!isActive) return;
-
-            if (aiPhase == 0)
-            {
-                // Find all players
-                players = new Player[Main.ActivePlayersCount];
-                int k = 0;
-                for (int i = 0; i < Main.player.Length; i++)
-                {
-                    Player player = Main.player[i];
-                    if (player != null && player.active)
-                    {
-                        players[k] = player;
-                        k++;
-                        if (k >= players.Length) i = Main.player.Length;
-                    }
-                }
-            }
 
             // Toggle burn periodically
             if (aiPhase % burnInterval == 0)

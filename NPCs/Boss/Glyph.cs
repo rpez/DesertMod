@@ -2,7 +2,7 @@
 using Terraria.ModLoader;
 using Terraria.ID;
 using Microsoft.Xna.Framework;
-using System;
+using System.Linq;
 
 namespace DesertMod.NPCs.Boss
 {
@@ -11,6 +11,9 @@ namespace DesertMod.NPCs.Boss
         // AI tick counter
         public int aiPhase = 0;
 
+        // List of all players
+        public Player[] players;
+        public int[] playerIDs;
         public NPC boss;
         public Vector2 attachPos;
         public bool isActive = true;
@@ -22,6 +25,7 @@ namespace DesertMod.NPCs.Boss
             npc.height = 44;
 
             npc.aiStyle = -1;
+            npc.boss = true;
 
             npc.lifeMax = 1500;
             npc.damage = 10;
@@ -47,10 +51,27 @@ namespace DesertMod.NPCs.Boss
 
         public override void AI()
         {
+            npc.netAlways = true;
+
             if (aiPhase == 0)
             {
                 boss = Main.npc[(int)npc.ai[0]];
                 attachPos = new Vector2(npc.ai[2], npc.ai[3]);
+
+                // Find all players
+                players = new Player[Main.ActivePlayersCount];
+                int k = 0;
+                for (int i = 0; i < Main.player.Length; i++)
+                {
+                    Player player = Main.player[i];
+                    if (player != null && player.active)
+                    {
+                        players[k] = player;
+                        k++;
+                        if (k >= players.Length) i = Main.player.Length;
+                    }
+                }
+                playerIDs = players.Select(player => player.whoAmI).ToArray();
             }
 
             if ((int)npc.ai[1] == 0)
@@ -62,14 +83,17 @@ namespace DesertMod.NPCs.Boss
                 }
                 else
                 {
-                    npc.immortal = true;
+
+                    foreach (int id in playerIDs)
+                    {
+                        npc.immune[id] = 10;
+                    }
                     npc.Center = boss.Center + attachPos;
                 }
             }
             else
             {
                 isActive = true;
-                npc.immortal = false;
                 attached = false;
             }
 

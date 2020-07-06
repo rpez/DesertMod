@@ -108,11 +108,13 @@ namespace DesertMod.NPCs.Boss
                 Main.npc[glyphPetrifying].ai[1] = 0;
                 Main.npc[glyphPetrifying].ai[2] = -100f;
                 Main.npc[glyphPetrifying].ai[3] = -100f;
+
                 glyphCrushing = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, mod.NPCType("GlyphCrushing"));
                 Main.npc[glyphCrushing].ai[0] = npc.whoAmI;
                 Main.npc[glyphCrushing].ai[1] = 0;
                 Main.npc[glyphCrushing].ai[2] = 0f;
                 Main.npc[glyphCrushing].ai[3] = -100f;
+
                 glyphBurning = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, mod.NPCType("GlyphBurning"));
                 Main.npc[glyphBurning].ai[0] = npc.whoAmI;
                 Main.npc[glyphBurning].ai[1] = 0;
@@ -268,7 +270,7 @@ namespace DesertMod.NPCs.Boss
             }
             if (goHigh)
             {
-                MoveTowards(npc, target + new Vector2(0, -700f), fastSpeed, 20f);
+                MoveTowards(npc, target + new Vector2(0, -500f), fastSpeed, 20f);
             }
             if (shootPattern1)
             {
