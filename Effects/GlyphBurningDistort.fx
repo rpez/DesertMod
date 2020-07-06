@@ -20,8 +20,6 @@ float uSaturation;
 float4 uSourceRect;
 float2 uZoom;
 
-
-
 float4 GlyphBurningDistort(float2 coords : TEXCOORD0) : COLOR0
 {
     float2 targetCoords = (uTargetPosition - uScreenPosition) / uScreenResolution;;

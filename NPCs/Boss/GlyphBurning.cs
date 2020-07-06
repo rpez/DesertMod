@@ -22,6 +22,7 @@ namespace DesertMod.NPCs.Boss
         private int burnDamage = 10;
         private int burnInterval = 500;
 
+        // Shader timers
         private int filterTimer = 0;
         private int filterBuildupTime = 200;
 
@@ -56,6 +57,7 @@ namespace DesertMod.NPCs.Boss
                 burnOn = !burnOn;
                 if (Main.netMode != NetmodeID.Server)
                 {
+                    // Toggle shaders
                     if (burnOn && !Filters.Scene["GlyphBurningGlow"].IsActive() && !Filters.Scene["GlyphBurningDistort"].IsActive())
                     {
                         Filters.Scene.Activate("GlyphBurningGlow", npc.Center).GetShader().UseTargetPosition(npc.Center);
@@ -70,6 +72,7 @@ namespace DesertMod.NPCs.Boss
                 }
             }
 
+            // Update shaders
             if (Main.netMode != NetmodeID.Server && Filters.Scene["GlyphBurningGlow"].IsActive() && Filters.Scene["GlyphBurningDistort"].IsActive())
             {
                 float progress = (float)filterTimer;
