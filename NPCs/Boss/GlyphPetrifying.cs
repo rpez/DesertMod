@@ -12,7 +12,7 @@ namespace DesertMod.NPCs.Boss
         private float distanceFromCenter = 300;
         private float rotationSpeed = 1;
 
-        private int ray;
+        private int ray = -1;
         private bool shootRay = true;
         private bool rayActive = false;
 
@@ -33,7 +33,11 @@ namespace DesertMod.NPCs.Boss
             base.AI();
             if (!isActive)
             {
-                Main.projectile[ray].timeLeft = 0;
+                if (ray >= 0)
+                {
+                    Main.projectile[ray].timeLeft = 0;
+                    ray = -1;
+                }
                 return;
             }
 

@@ -9,8 +9,8 @@ namespace DesertMod.NPCs.Boss
 {
     class GlyphCrushing : Glyph
     {
-        private int leftWall;
-        private int rightWall;
+        private int leftWall = -1;
+        private int rightWall = -1;
         private Vector2 target;
 
         private bool wallsActive = false;
@@ -34,8 +34,16 @@ namespace DesertMod.NPCs.Boss
             base.AI();
             if (!isActive)
             {
-                Main.projectile[leftWall].timeLeft = 0;
-                Main.projectile[rightWall].timeLeft = 0;
+                if (leftWall >= 0)
+                {
+                    Main.projectile[leftWall].timeLeft = 0;
+                    leftWall = -1;
+                }
+                if (rightWall >= 0)
+                {
+                    Main.projectile[rightWall].timeLeft = 0;
+                    rightWall = -1;
+                }
                 return;
             }
 
