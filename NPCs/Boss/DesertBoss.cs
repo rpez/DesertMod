@@ -45,6 +45,7 @@ namespace DesertMod.NPCs.Boss
         private float fastSpeed = 13f;
         private float chargeSpeed = 20f;
         private float minCharge = 500f;
+        private float currentCharge = 0f;
         private Vector2 chargeStartPos;
 
         // Attacks
@@ -121,6 +122,9 @@ namespace DesertMod.NPCs.Boss
                 Main.npc[glyphBurning].ai[2] = 100f;
                 Main.npc[glyphBurning].ai[3] = -100f;
             }
+
+            // Add "tick" to the phase counter of AI
+            aiPhase++;
 
             // Check boss phase
             CheckBossPhase();
@@ -267,7 +271,8 @@ namespace DesertMod.NPCs.Boss
             if (charge)
             {
                 npc.velocity = chargeDirection * chargeSpeed;
-                if (Vector2.Distance(npc.Center, chargeStartPos) > minCharge) charge = false;
+                currentCharge += npc.velocity.Length();
+                if (Vector2.Distance(npc.Center, chargeStartPos) > minCharge * 0.5f && currentCharge > minCharge) charge = false;
             }
             if (goHigh)
             {
@@ -295,9 +300,6 @@ namespace DesertMod.NPCs.Boss
             {
                 shootPattern3 = false;
             }
-
-            // Add "tick" to the phase counter of AI
-            aiPhase++;
         }
 
         public override void FindFrame(int frameHeight)
@@ -424,6 +426,7 @@ namespace DesertMod.NPCs.Boss
             follow = false;
             chargeDirection = direction;
             chargeStartPos = npc.Center;
+            currentCharge = 0f;
         }
 
         // Move npc towards a target at a certain speed and turn resistance
