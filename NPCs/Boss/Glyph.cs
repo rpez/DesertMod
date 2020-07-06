@@ -95,7 +95,8 @@ namespace DesertMod.NPCs.Boss
                         move *= returnSpeed / length;
                     }
                     npc.velocity = move;
-                    if (Vector2.Distance(npc.Center, targetPos) <= 1f) attached = true;
+                    // TODO: fix workaround
+                    if (Vector2.Distance(npc.Center, targetPos) <= 10f) attached = true;
                 }
                 else
                 {
