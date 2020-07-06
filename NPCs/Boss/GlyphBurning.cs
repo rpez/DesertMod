@@ -30,7 +30,12 @@ namespace DesertMod.NPCs.Boss
         {
             // Run base AI and if not active do not execute glyph specific AI
             base.AI();
-            if (!isActive) return;
+            if (!isActive)
+            {
+                DeactivateShaders();
+                burnOn = false;
+                return;
+            }
 
             // Toggle burn periodically
             if (aiPhase % burnInterval == 0)
@@ -39,16 +44,13 @@ namespace DesertMod.NPCs.Boss
                 if (Main.netMode != NetmodeID.Server)
                 {
                     // Toggle shaders
-                    if (burnOn && !Filters.Scene["GlyphBurningGlow"].IsActive() && !Filters.Scene["GlyphBurningDistort"].IsActive())
+                    if (burnOn)
                     {
-                        Filters.Scene.Activate("GlyphBurningGlow", npc.Center).GetShader().UseTargetPosition(npc.Center);
-                        Filters.Scene.Activate("GlyphBurningDistort", npc.Center).GetShader().UseTargetPosition(npc.Center);
-                        filterTimer = 0;
+                        ActivateShaders();
                     }
-                    else if (!burnOn && Filters.Scene["GlyphBurningGlow"].IsActive() && Filters.Scene["GlyphBurningDistort"].IsActive())
+                    else
                     {
-                        Filters.Scene["GlyphBurningGlow"].Deactivate();
-                        Filters.Scene["GlyphBurningDistort"].Deactivate();
+                        DeactivateShaders();
                     }
                 }
             }
@@ -106,6 +108,25 @@ namespace DesertMod.NPCs.Boss
             
             aiPhase++;
             filterTimer++;
+        }
+
+        private void ActivateShaders()
+        {
+            if (!Filters.Scene["GlyphBurningGlow"].IsActive() && !Filters.Scene["GlyphBurningDistort"].IsActive())
+            {
+                Filters.Scene.Activate("GlyphBurningGlow", npc.Center).GetShader().UseTargetPosition(npc.Center);
+                Filters.Scene.Activate("GlyphBurningDistort", npc.Center).GetShader().UseTargetPosition(npc.Center);
+                filterTimer = 0;
+            }
+        }
+
+        private void DeactivateShaders()
+        {
+            if (Filters.Scene["GlyphBurningGlow"].IsActive() && Filters.Scene["GlyphBurningDistort"].IsActive())
+            {
+                Filters.Scene["GlyphBurningGlow"].Deactivate();
+                Filters.Scene["GlyphBurningDistort"].Deactivate();
+            }
         }
 
         public override void FindFrame(int frameHeight)

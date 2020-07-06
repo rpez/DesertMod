@@ -51,7 +51,12 @@ namespace DesertMod.NPCs.Boss
         {
             // Run base AI and if not active do not execute glyph specific AI
             base.AI();
-            if (!isActive) return;
+            if (!isActive)
+            {
+                Main.projectile[leftWall].timeLeft = 0;
+                Main.projectile[rightWall].timeLeft = 0;
+                return;
+            }
 
             if (aiPhase == 0) target = new Vector2(npc.ai[4], npc.ai[5]);
 

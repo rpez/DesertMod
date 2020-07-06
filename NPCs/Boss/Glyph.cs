@@ -14,10 +14,13 @@ namespace DesertMod.NPCs.Boss
         // List of all players
         public Player[] players;
         public int[] playerIDs;
+
         public NPC boss;
         public Vector2 attachPos;
         public bool isActive = true;
         public bool attached = true;
+        public float returnSpeed = 30f;
+        public float turnResistance = 10f;
 
         public override void SetDefaults()
         {
@@ -79,11 +82,23 @@ namespace DesertMod.NPCs.Boss
                 isActive = false;
                 if (!attached)
                 {
-
+                    Vector2 move = boss.Center + attachPos - npc.Center;
+                    float length = move.Length();
+                    if (length > returnSpeed)
+                    {
+                        move *= returnSpeed / length;
+                    }
+                    move = (npc.velocity * turnResistance + move) / (turnResistance + 1f);
+                    length = move.Length();
+                    if (length > returnSpeed)
+                    {
+                        move *= returnSpeed / length;
+                    }
+                    npc.velocity = move;
+                    if (Vector2.Distance(npc.Center, attachPos) <= 0.1f) attached = true;
                 }
                 else
                 {
-
                     foreach (int id in playerIDs)
                     {
                         npc.immune[id] = 10;

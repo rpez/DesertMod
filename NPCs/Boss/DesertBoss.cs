@@ -204,7 +204,8 @@ namespace DesertMod.NPCs.Boss
                 // Toggle petrifying glyph
                 if (aiPhase == 2000)
                 {
-                    ToggleGlyph(true, false, false);
+                    if (!glyphPetrifyingActive) ToggleGlyph(true, false, false);
+                    else ToggleGlyph(false, false, false);
 
                     aiPhase = 0;
                 }
