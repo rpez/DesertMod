@@ -19,17 +19,21 @@ namespace DesertMod.NPCs.Boss
 
         // Behavior flags
         private bool follow = true;
-        private bool hover = true;
+        private bool hover = false;
         private bool charge = false;
+        private bool goHigh = false;
         private bool shootPattern1 = false;
         private bool shootPattern2 = false;
         private bool shootPattern3 = false;
         private bool glyphPetrifying = false;
         private bool glyphPetrifyingActive = false;
+        private bool glyphPetrifyingDead = false;
         private bool glyphCrushing = false;
         private bool glyphCrushingActive = false;
+        private bool glyphCrushingDead = false;
         private bool glyphBurning = false;
         private bool glyphBurningActive = false;
+        private bool glyphBurningDead = false;
 
         // Movement
         private float hoverDistanceFromPlayer = 1000f;
@@ -37,11 +41,13 @@ namespace DesertMod.NPCs.Boss
         private float normalSpeed = 7f;
         private float fastSpeed = 13f;
         private float chargeSpeed = 20f;
+        private float minCharge = 500f;
+        private Vector2 chargeStartPos;
 
         // Attacks
-        private int daggerDamage = 1;
-        private float daggerSpeed = 25f;
-        private int halberdDamage = 10;
+        private int daggerDamage = 100;
+        private float daggerSpeed = 30f;
+        private int halberdDamage = 500;
 
         // Animation
         private int frame = 0;
@@ -62,9 +68,9 @@ namespace DesertMod.NPCs.Boss
             npc.boss = true;
             npc.aiStyle = -1;
 
-            npc.lifeMax = 1500;
-            npc.damage = 10;
-            npc.defense = 10;
+            npc.lifeMax = 10000;
+            npc.damage = 100;
+            npc.defense = 75;
             npc.knockBackResist = 0f;
 
             npc.noGravity = true;
@@ -136,17 +142,45 @@ namespace DesertMod.NPCs.Boss
             */
             if (currentPhase == BossPhase.HEALTHY)
             {
-                follow = true;
-                // Dagger attack
-                if (aiPhase % 50 == 0 && npc.life < npc.lifeMax)
+                // Follow target and charge three times
+                if (!goHigh)
                 {
-                    glyphBurning = true;
-                    shootPattern1 = true;
+                    if (aiPhase == 200 || aiPhase == 250 || aiPhase == 300 || aiPhase == 600 || aiPhase == 650 || aiPhase == 700)
+                    {
+                        InitializeCharge(towardsPlayer);
+                    }
+                    if (!charge)
+                    {
+                        follow = true;
+                    }
                 }
-                if (aiPhase % 300 == 0)
+                else
                 {
-                    hover = !hover;
-                    shootPattern2 = true;
+                    if (aiPhase % 150 == 0)
+                    {
+                        shootPattern2 = true;
+                    }
+                    else if (aiPhase % 50 == 0)
+                    {
+                        shootPattern1 = true;
+                    }
+                }
+
+                // Switch hover to follow
+                if (aiPhase % 1000 == 0)
+                {
+                    follow = goHigh;
+                    goHigh = !goHigh;
+                    hover = false;
+                    charge = false;
+                }
+
+                // Toggle petrifying glyph
+                if (aiPhase == 2000)
+                {
+                    ToggleGlyph(true, false, false);
+
+                    aiPhase = 0;
                 }
             }
 
@@ -163,7 +197,7 @@ namespace DesertMod.NPCs.Boss
                 {
                     charge = true;
                     chargeDirection = towardsPlayer;
-                    int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 0f);
+                    int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 5f);
                     Main.projectile[pro].ai[0] = npc.whoAmI;
                     Main.projectile[pro].ai[1] = 0f;
                 }
@@ -172,7 +206,7 @@ namespace DesertMod.NPCs.Boss
                 {
                     charge = true;
                     chargeDirection = towardsPlayer;
-                    int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 0f);
+                    int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 5f);
                     Main.projectile[pro].ai[0] = npc.whoAmI;
                     Main.projectile[pro].ai[1] = 1f;
                 }
@@ -197,7 +231,7 @@ namespace DesertMod.NPCs.Boss
             // Execute behaviour according to flags
             if (follow)
             {
-                if (!hover) MoveTowards(npc, target - towardsPlayer, (float)(distance > fastSpeedDistance ? fastSpeed : normalSpeed), 30f);
+                MoveTowards(npc, target - towardsPlayer, (float)(distance > fastSpeedDistance ? fastSpeed : normalSpeed), 30f);
             }
             if (hover)
             {
@@ -206,6 +240,11 @@ namespace DesertMod.NPCs.Boss
             if (charge)
             {
                 npc.velocity = chargeDirection * chargeSpeed;
+                if (Vector2.Distance(npc.Center, chargeStartPos) > minCharge) charge = false;
+            }
+            if (goHigh)
+            {
+                MoveTowards(npc, target + new Vector2(0, -700f), fastSpeed, 20f);
             }
             if (shootPattern1)
             {
@@ -230,33 +269,48 @@ namespace DesertMod.NPCs.Boss
 
                 shootPattern3 = false;
             }
-            if (!glyphPetrifyingActive)
+            if (glyphPetrifying)
             {
-                if (glyphPetrifying)
+                if (!glyphPetrifyingActive && !glyphPetrifyingDead)
                 {
                     int glyph = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, mod.NPCType("GlyphPetrifying"));
                     Main.npc[glyph].ai[0] = npc.whoAmI;
+                    Main.npc[glyph].ai[1] = 1;
                     glyphPetrifyingActive = true;
                     glyphPetrifying = false;
                 }
+                else
+                {
+                    glyphPetrifying = false;
+                }
             }
-            if (!glyphCrushingActive)
+            if (glyphCrushing)
             {
-                if (glyphCrushing)
+                if (!glyphCrushingActive && !glyphCrushingDead)
                 {
                     int glyph = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, mod.NPCType("GlyphCrushing"));
-                    Main.npc[glyph].ai[0] = npc.Center.X;
-                    Main.npc[glyph].ai[1] = npc.Center.Y;
+                    Main.npc[glyph].ai[0] = npc.whoAmI;
+                    Main.npc[glyph].ai[1] = 1;
+                    Main.npc[glyph].ai[2] = npc.Center.X;
+                    Main.npc[glyph].ai[3] = npc.Center.Y;
                     glyphCrushingActive = true;
                     glyphCrushing = false;
                 }
+                else
+                {
+                    glyphCrushing = false;
+                }
             }
-            if (!glyphBurningActive)
+            if (glyphBurning)
             {
-                if (glyphBurning)
+                if (!glyphBurningActive && !glyphBurningDead)
                 {
                     int glyph = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, mod.NPCType("GlyphBurning"));
                     glyphBurningActive = true;
+                    glyphBurning = false;
+                }
+                else
+                {
                     glyphBurning = false;
                 }
             }
@@ -300,9 +354,39 @@ namespace DesertMod.NPCs.Boss
             base.BossLoot(ref name, ref potionType);
         }
 
-        private void MoveTowards(NPC npc, Vector2 playerTarget, float speed, float turnResistance)
+        // Toggles glyphs
+        private void ToggleGlyph(bool petrifying, bool crushing, bool burning)
         {
-            Vector2 move = playerTarget - npc.Center;
+            if (petrifying)
+            {
+                if (!glyphPetrifyingActive && !glyphPetrifyingDead) glyphPetrifying = true;
+                else glyphPetrifyingActive = false;
+            }
+            if (crushing)
+            {
+                if (!glyphCrushingActive && !glyphCrushingDead) glyphCrushing = true;
+                else glyphCrushingActive = false;
+            }
+            if (burning)
+            {
+                if (!glyphBurningActive && !glyphBurningDead) glyphBurning = true;
+                else glyphBurningActive = false;
+            }
+        }
+
+        // Set up values for charge
+        private void InitializeCharge(Vector2 direction)
+        {
+            charge = true;
+            follow = false;
+            chargeDirection = direction;
+            chargeStartPos = npc.Center;
+        }
+
+        // Move npc towards a target at a certain speed and turn resistance
+        private void MoveTowards(NPC npc, Vector2 target, float speed, float turnResistance)
+        {
+            Vector2 move = target - npc.Center;
             float length = move.Length();
             if (length > speed)
             {

@@ -9,7 +9,9 @@ namespace DesertMod.NPCs.Boss
     class Glyph : ModNPC
     {
         // AI tick counter
-        private int aiPhase = 0;
+        public int aiPhase = 0;
+
+        public NPC boss;
 
         public override void SetDefaults()
         {
@@ -38,6 +40,13 @@ namespace DesertMod.NPCs.Boss
         public override void FindFrame(int frameHeight)
         {
             base.FindFrame(frameHeight);
+        }
+
+        public override void AI()
+        {
+            if (aiPhase == 0) boss = Main.npc[(int)npc.ai[0]];
+
+            aiPhase++;
         }
     }
 }

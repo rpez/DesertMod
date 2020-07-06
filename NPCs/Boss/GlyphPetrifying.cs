@@ -8,11 +8,6 @@ namespace DesertMod.NPCs.Boss
 {
     class GlyphPetrifying : Glyph
     {
-        // AI tick counter
-        private int aiPhase = 0;
-
-        private NPC boss;
-
         private float rotationAroundBoss = 0;
         private float distanceFromCenter = 300;
         private float rotationSpeed = 1;
@@ -53,7 +48,7 @@ namespace DesertMod.NPCs.Boss
 
         public override void AI()
         {
-            if (aiPhase == 0) boss = Main.npc[(int)npc.ai[0]];
+            base.AI();
 
             npc.TargetClosest(true);
 

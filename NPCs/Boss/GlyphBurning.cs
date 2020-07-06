@@ -10,9 +10,6 @@ namespace DesertMod.NPCs.Boss
 {
     class GlyphBurning : Glyph
     {
-        // AI tick counter
-        private int aiPhase = 0;
-
         // List of all players
         private Player[] players;
 

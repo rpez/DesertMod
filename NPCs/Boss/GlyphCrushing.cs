@@ -9,9 +9,6 @@ namespace DesertMod.NPCs.Boss
 {
     class GlyphCrushing : Glyph
     {
-        // AI tick counter
-        private int aiPhase = 0;
-
         private int leftWall;
         private int rightWall;
         private Vector2 target;
@@ -52,7 +49,7 @@ namespace DesertMod.NPCs.Boss
 
         public override void AI()
         {
-            if (aiPhase == 0) target = new Vector2(npc.ai[0], npc.ai[1]);
+            if (aiPhase == 0) target = new Vector2(npc.ai[2], npc.ai[3]);
 
             // Summon walls if they are not active
             if (!wallsActive)
