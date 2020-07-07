@@ -1,9 +1,5 @@
 ﻿using Terraria;
-using Terraria.ModLoader;
-using Terraria.ID;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 
 namespace DesertMod.NPCs.Boss
 {
