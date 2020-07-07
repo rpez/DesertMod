@@ -173,7 +173,6 @@ namespace DesertMod.NPCs.Boss
             */
             if (currentPhase == BossPhase.HEALTHY)
             {
-                goHigh = true;
                 // Hovering above player?
                 if (!goHigh)
                 {
