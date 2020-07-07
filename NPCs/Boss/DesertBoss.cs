@@ -11,12 +11,18 @@ namespace DesertMod.NPCs.Boss
     {
         private enum BossPhase { HEALTHY, DAMAGED, RAGED }
 
-        private Vector2 chargeDirection;
-
-        // AI
+        // Updated in code
         private int aiPhase = 0;
-        private BossPhase currentPhase = BossPhase.HEALTHY;
         private bool initialize = true;
+
+        private BossPhase currentPhase = BossPhase.HEALTHY;
+
+        private Vector2 chargeDirection;
+        private Vector2 chargeStartPos;
+
+        // Animation
+        private int frame = 0;
+        private double counting;
 
         // Behavior flags
         private bool follow = true;
@@ -39,25 +45,20 @@ namespace DesertMod.NPCs.Boss
         private bool glyphBurningActive = false;
         private bool glyphBurningDead = false;
 
+        // ADJUSTABLE VARIABLES
         // Movement
-        private float hoverDistanceFromPlayer = 1000f;
+        private float hoverDistanceFromPlayer = 400f;
         private float fastSpeedDistance = 300f;
         private float normalSpeed = 7f;
         private float fastSpeed = 13f;
         private float chargeSpeed = 20f;
         private float minCharge = 500f;
         private float currentCharge = 0f;
-        private Vector2 chargeStartPos;
-
+        
         // Attacks
         private int daggerDamage = 100;
-        private float daggerSpeed = 30f;
-        private int halberdDamage = 500;
-
-        // Animation
-        private int frame = 0;
-        private double counting;
-
+        private float daggerSpeed = 40f;
+        private int halberdDamage = 300;
 
         public override void SetStaticDefaults()
         {
@@ -279,7 +280,7 @@ namespace DesertMod.NPCs.Boss
             }
             if (goHigh)
             {
-                MoveTowards(npc, target + new Vector2(0, -500f), fastSpeed, 20f);
+                MoveTowards(npc, target + new Vector2(0, -hoverDistanceFromPlayer), fastSpeed, 20f);
             }
             if (shootPattern1)
             {
