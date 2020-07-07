@@ -226,25 +226,19 @@ namespace DesertMod.NPCs.Boss
             */
             else if (currentPhase == BossPhase.DAMAGED)
             {
-                follow = true;
-                if (aiPhase == 150)
-                {
-                    InitializeCharge(towardsPlayer);
-                    Halberd(bossCenter, true);
-                }
-                if (aiPhase == 200) charge = false;
-                if (aiPhase == 210)
-                {
-                    InitializeCharge(towardsPlayer);
-                    Halberd(bossCenter, false);
-                }
                 // Hovering above player?
                 if (!goHigh)
                 {
-                    // Follow target and charge occasionally
-                    if (aiPhase % 50 == 0 && aiPhase % 200 != 0 && aiPhase % 250 != 0)
+                    // Follow target and charge with halberd occasionally
+                    if (aiPhase % 300 == 0)
                     {
                         InitializeCharge(towardsPlayer);
+                        Halberd(bossCenter, true);
+                    }
+                    if (aiPhase % 350 == 0)
+                    {
+                        InitializeCharge(towardsPlayer);
+                        Halberd(bossCenter, false);
                     }
                     if (!charge)
                     {
@@ -256,9 +250,9 @@ namespace DesertMod.NPCs.Boss
                     // Shoot single daggers and fans
                     if (aiPhase % 150 == 0)
                     {
-                        ShootDaggerFan(towardsPlayer, 5, 5f);
+                        ShootDaggerFan(towardsPlayer, 15, 3f);
                     }
-                    else if (aiPhase % 50 == 0)
+                    else if (aiPhase % 50 == 0 || aiPhase % 75 == 0)
                     {
                         ShootDagger(towardsPlayer);
                     }
@@ -291,7 +285,55 @@ namespace DesertMod.NPCs.Boss
             */
             else if (currentPhase == BossPhase.ENRAGED)
             {
+                // Hovering above player?
+                if (!goHigh)
+                {
+                    // Follow target and charge with halberd occasionally
+                    if (aiPhase % 300 == 0)
+                    {
+                        InitializeCharge(towardsPlayer);
+                        Halberd(bossCenter, true);
+                    }
+                    if (aiPhase % 350 == 0)
+                    {
+                        InitializeCharge(towardsPlayer);
+                        Halberd(bossCenter, false);
+                    }
+                    if (!charge)
+                    {
+                        follow = true;
+                    }
+                }
+                else
+                {
+                    // Shoot single daggers and fans
+                    if (aiPhase % 150 == 0)
+                    {
+                        ShootDaggerFan(towardsPlayer, 30, 2f);
+                    }
+                    else if (aiPhase % 25 == 0)
+                    {
+                        ShootDagger(towardsPlayer);
+                    }
+                }
 
+                // Switch hover to follow
+                if (aiPhase % 700 == 0)
+                {
+                    follow = goHigh;
+                    goHigh = !goHigh;
+                    hover = false;
+                    charge = false;
+                }
+
+                // Toggle petrifying glyph
+                if (aiPhase == 2100)
+                {
+                    if (!glyphPetrifyingActive) ToggleGlyph(true, true, true);
+                    else ToggleGlyph(false, false, false);
+
+                    aiPhase = 0;
+                }
             }
 
             // Execute behaviour according to flags
@@ -478,7 +520,7 @@ namespace DesertMod.NPCs.Boss
             float totalSpread = count * spread;
             float angle = -totalSpread * 0.5f * toRad;
             float increment = spread * toRad;
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < count; i++)
             {
                 Vector2 dir = new Vector2(direction.X * (float)Math.Cos(angle + i * increment) - direction.Y * (float)Math.Sin(angle + i * increment),
                     direction.X * (float)Math.Sin(angle + i * increment) + direction.Y * (float)Math.Cos(angle + i * increment));
@@ -486,6 +528,7 @@ namespace DesertMod.NPCs.Boss
             }
         }
 
+        // Spawn a halberd and initialize it
         private void Halberd(Vector2 position, bool leftToRight = true)
         {
             int pro = Projectile.NewProjectile(position, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 5f);
