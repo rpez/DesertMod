@@ -178,7 +178,7 @@ namespace DesertMod.NPCs.Boss
                 // Follow target and charge three times
                 if (!goHigh)
                 {
-                    if (aiPhase % 50 == 0 && aiPhase % 200 != 0)
+                    if (aiPhase % 50 == 0 && aiPhase % 200 != 0 && aiPhase % 250 != 0)
                     {
                         InitializeCharge(towardsPlayer);
                     }
@@ -401,16 +401,19 @@ namespace DesertMod.NPCs.Boss
             {
                 glyphPetrifyingDead = true;
                 glyphPetrifyingActive = false;
+                IncreaseStats(1.0f, 1.2f, 1.0f);
             }
             if (!glyphCrushingDead && (int)npc.ai[1] != 0)
             {
                 glyphCrushingDead = true;
                 glyphCrushingActive = false;
+                IncreaseStats(1.2f, 1.2f, 1.0f);
             }
             if (!glyphBurningDead && (int)npc.ai[2] != 0)
             {
                 glyphBurningDead = true;
                 glyphBurningActive = false;
+                IncreaseStats(1.2f, 1.2f, 1.5f);
             }
         }
 
@@ -420,6 +423,19 @@ namespace DesertMod.NPCs.Boss
             if (npc.life >= npc.lifeMax / 2) currentPhase = BossPhase.HEALTHY;
             else if (npc.life <= npc.lifeMax / 2 && npc.life >= npc.lifeMax / 3) currentPhase = BossPhase.DAMAGED;
             else currentPhase = BossPhase.RAGED;
+        }
+
+        // Scale boss attack damages, defense and speed
+        private void IncreaseStats(float atk = 1.0f, float def = 1.0f, float spd = 1.0f)
+        {
+            npc.damage = (int)(npc.damage * atk);
+            daggerDamage = (int)(daggerDamage * atk);
+            halberdDamage = (int)(halberdDamage * atk);
+
+            npc.defense = (int)(npc.defense * def);
+
+            normalSpeed = normalSpeed * spd;
+            fastSpeed = fastSpeed * spd;
         }
 
         // Set up values for charge
