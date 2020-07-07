@@ -54,7 +54,7 @@ namespace DesertMod.NPCs.Boss
         
         // Attacks
         private int daggerDamage = 100;
-        private float daggerSpeed = 40f;
+        private float daggerSpeed = 1f;
         private int halberdDamage = 300;
 
         public override void SetStaticDefaults()
@@ -173,6 +173,7 @@ namespace DesertMod.NPCs.Boss
             */
             if (currentPhase == BossPhase.HEALTHY)
             {
+                goHigh = true;
                 // Hovering above player?
                 if (!goHigh)
                 {
@@ -195,7 +196,7 @@ namespace DesertMod.NPCs.Boss
                     }
                     else if (aiPhase % 50 == 0)
                     {
-                        ShootDagger(towardsPlayer);
+                        ShootDagger(towardsPlayer, bossCenter);
                     }
                 }
 
@@ -250,11 +251,11 @@ namespace DesertMod.NPCs.Boss
                     // Shoot single daggers and fans
                     if (aiPhase % 150 == 0)
                     {
-                        ShootDaggerFan(towardsPlayer, 15, 3f);
+                        ShootDaggerFan(towardsPlayer, 10, 3f);
                     }
                     else if (aiPhase % 50 == 0 || aiPhase % 75 == 0)
                     {
-                        ShootDagger(towardsPlayer);
+                        ShootDagger(towardsPlayer, bossCenter);
                     }
                 }
 
@@ -309,11 +310,11 @@ namespace DesertMod.NPCs.Boss
                     // Shoot single daggers and fans
                     if (aiPhase % 150 == 0)
                     {
-                        ShootDaggerFan(towardsPlayer, 30, 2f);
+                        ShootDaggerFan(towardsPlayer, 6, 60f);
                     }
                     else if (aiPhase % 25 == 0)
                     {
-                        ShootDagger(towardsPlayer);
+                        ShootDagger(towardsPlayer, bossCenter);
                     }
                 }
 
@@ -353,7 +354,7 @@ namespace DesertMod.NPCs.Boss
             }
             if (goHigh)
             {
-                MoveTowards(npc, target + new Vector2(0, -hoverDistanceFromPlayer), fastSpeed, 20f);
+                MoveTowards(npc, target + new Vector2(-hoverDistanceFromPlayer, 0), fastSpeed, 20f);
             }
         }
 
@@ -506,10 +507,10 @@ namespace DesertMod.NPCs.Boss
         }
 
         // Shoot single dagger
-        private void ShootDagger(Vector2 direction)
+        private void ShootDagger(Vector2 direction, Vector2 position)
         {
             direction.Normalize();
-            Projectile.NewProjectile(npc.Center, direction * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 1f);
+            Projectile.NewProjectile(position, direction * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 1f);
         }
 
         // Shoot a fan of daggers (count = amount of daggers, spread = angle between two adjacent daggers)
@@ -518,13 +519,15 @@ namespace DesertMod.NPCs.Boss
             direction.Normalize();
             float toRad = 1f / 180f * (float)Math.PI;
             float totalSpread = count * spread;
+            if (count % 2 == 0) totalSpread -= spread * 0.5f; // Center even amounts
             float angle = -totalSpread * 0.5f * toRad;
             float increment = spread * toRad;
             for (int i = 0; i < count; i++)
             {
-                Vector2 dir = new Vector2(direction.X * (float)Math.Cos(angle + i * increment) - direction.Y * (float)Math.Sin(angle + i * increment),
-                    direction.X * (float)Math.Sin(angle + i * increment) + direction.Y * (float)Math.Cos(angle + i * increment));
-                ShootDagger(dir);
+                float offset = angle + i * increment;
+                Vector2 dir = new Vector2((float)Math.Cos(offset) * direction.X - (float)Math.Sin(offset) * direction.Y, 
+                    (float)Math.Sin(offset) * direction.X + (float)Math.Cos(offset) * direction.Y);
+                ShootDagger(dir, npc.Center);
             }
         }
 

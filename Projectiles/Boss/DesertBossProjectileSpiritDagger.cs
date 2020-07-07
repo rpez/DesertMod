@@ -1,15 +1,17 @@
 ﻿using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace DesertMod.Projectiles.Boss
 {
     class DesertBossProjectileSpiritDagger : ModProjectile
     {
+        private int aiPhase = 0;
+
         // How many ghosting sprites does the trail have
-        int tailLength = 4;
+        private int tailLength = 4;
 
         public override void SetStaticDefaults()
         {
@@ -19,11 +21,10 @@ namespace DesertMod.Projectiles.Boss
         public override void SetDefaults()
         {
             projectile.width = 18;
-            projectile.height = 42;
+            projectile.height = 18;
             projectile.scale = 1.0f;
 
-            projectile.aiStyle = 1;
-            aiType = ProjectileID.Bullet;
+            projectile.aiStyle = -1;
 
             projectile.friendly = false;
             projectile.hostile = true;
@@ -36,10 +37,17 @@ namespace DesertMod.Projectiles.Boss
 
         public override void AI()
         {
+            if (aiPhase == 0)
+            {
+                projectile.rotation = -(float)(Math.Atan2(-projectile.velocity.Y, projectile.velocity.X) - 90f / 180f * Math.PI);
+            }
+            
             // Glow and dust trail
             Dust.NewDust(projectile.position, projectile.width, projectile.height, 217,
                 projectile.velocity.X * 0.25f, projectile.velocity.Y * 0.25f, 150, default(Color), 1f);
             Lighting.AddLight(projectile.Center, 0.3f, 1f, 1f);
+
+            aiPhase++;
         }
 
         public override bool PreDrawExtras(SpriteBatch spriteBatch)
