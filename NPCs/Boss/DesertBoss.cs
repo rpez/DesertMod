@@ -29,9 +29,6 @@ namespace DesertMod.NPCs.Boss
         private bool hover = false;
         private bool charge = false;
         private bool goHigh = false;
-        private bool shootPattern1 = false;
-        private bool shootPattern2 = false;
-        private bool shootPattern3 = false;
 
         private int glyphPetrifying = -1;
         private bool glyphPetrifyingActive = false;
@@ -176,9 +173,10 @@ namespace DesertMod.NPCs.Boss
             */
             if (currentPhase == BossPhase.HEALTHY)
             {
-                // Follow target and charge three times
+                // Hovering above player?
                 if (!goHigh)
                 {
+                    // Follow target and charge occasionally
                     if (aiPhase % 50 == 0 && aiPhase % 200 != 0 && aiPhase % 250 != 0)
                     {
                         InitializeCharge(towardsPlayer);
@@ -190,13 +188,14 @@ namespace DesertMod.NPCs.Boss
                 }
                 else
                 {
+                    // Shoot single daggers and fans
                     if (aiPhase % 150 == 0)
                     {
-                        shootPattern2 = true;
+                        ShootDaggerFan(towardsPlayer, 5, 5f);
                     }
                     else if (aiPhase % 50 == 0)
                     {
-                        shootPattern1 = true;
+                        ShootDagger(towardsPlayer);
                     }
                 }
 
@@ -230,25 +229,57 @@ namespace DesertMod.NPCs.Boss
                 follow = true;
                 if (aiPhase == 150)
                 {
-                    charge = true;
-                    chargeDirection = towardsPlayer;
-                    int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 5f);
-                    Main.projectile[pro].ai[0] = npc.whoAmI;
-                    Main.projectile[pro].ai[1] = 0f;
+                    InitializeCharge(towardsPlayer);
+                    Halberd(bossCenter, true);
                 }
                 if (aiPhase == 200) charge = false;
                 if (aiPhase == 210)
                 {
-                    charge = true;
-                    chargeDirection = towardsPlayer;
-                    int pro = Projectile.NewProjectile(bossCenter, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 5f);
-                    Main.projectile[pro].ai[0] = npc.whoAmI;
-                    Main.projectile[pro].ai[1] = 1f;
+                    InitializeCharge(towardsPlayer);
+                    Halberd(bossCenter, false);
                 }
-                if (aiPhase > 260)
+                // Hovering above player?
+                if (!goHigh)
                 {
-                    aiPhase = 0;
+                    // Follow target and charge occasionally
+                    if (aiPhase % 50 == 0 && aiPhase % 200 != 0 && aiPhase % 250 != 0)
+                    {
+                        InitializeCharge(towardsPlayer);
+                    }
+                    if (!charge)
+                    {
+                        follow = true;
+                    }
+                }
+                else
+                {
+                    // Shoot single daggers and fans
+                    if (aiPhase % 150 == 0)
+                    {
+                        ShootDaggerFan(towardsPlayer, 5, 5f);
+                    }
+                    else if (aiPhase % 50 == 0)
+                    {
+                        ShootDagger(towardsPlayer);
+                    }
+                }
+
+                // Switch hover to follow
+                if (aiPhase % 700 == 0)
+                {
+                    follow = goHigh;
+                    goHigh = !goHigh;
+                    hover = false;
                     charge = false;
+                }
+
+                // Toggle petrifying glyph
+                if (aiPhase == 2100)
+                {
+                    if (!glyphPetrifyingActive) ToggleGlyph(true, true, false);
+                    else ToggleGlyph(false, false, false);
+
+                    aiPhase = 0;
                 }
             }
 
@@ -281,28 +312,6 @@ namespace DesertMod.NPCs.Boss
             if (goHigh)
             {
                 MoveTowards(npc, target + new Vector2(0, -hoverDistanceFromPlayer), fastSpeed, 20f);
-            }
-            if (shootPattern1)
-            {
-                Projectile.NewProjectile(bossCenter, towardsPlayer * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 0f);
-
-                shootPattern1 = false;
-            }
-            if (shootPattern2)
-            {
-                float angle = -10f / 180 * (float)Math.PI;
-                float increment = 5f / 180 * (float)Math.PI;
-                for (int i = 0; i < 5; i++)
-                {
-                    Vector2 dir = new Vector2(towardsPlayer.X * (float)Math.Cos(angle + i * increment) - towardsPlayer.Y * (float)Math.Sin(angle + i * increment),
-                        towardsPlayer.X * (float)Math.Sin(angle + i * increment) + towardsPlayer.Y * (float)Math.Cos(angle + i * increment));
-                    Projectile.NewProjectile(bossCenter, dir * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 0f);
-                }
-                shootPattern2 = false;
-            }
-            if (shootPattern3)
-            {
-                shootPattern3 = false;
             }
         }
 
@@ -369,8 +378,6 @@ namespace DesertMod.NPCs.Boss
                 if (!glyphCrushingActive && !glyphCrushingDead)
                 {
                     Main.npc[glyphCrushing].ai[1] = 1;
-                    Main.npc[glyphCrushing].ai[4] = npc.Center.X;
-                    Main.npc[glyphCrushing].ai[5] = npc.Center.Y;
                     glyphCrushingActive = true;
                 }
             }
@@ -434,16 +441,16 @@ namespace DesertMod.NPCs.Boss
         }
 
         // Scale boss attack damages, defense and speed
-        private void IncreaseStats(float atk = 1.0f, float def = 1.0f, float spd = 1.0f)
+        private void IncreaseStats(float attack = 1.0f, float defense = 1.0f, float speed = 1.0f)
         {
-            npc.damage = (int)(npc.damage * atk);
-            daggerDamage = (int)(daggerDamage * atk);
-            halberdDamage = (int)(halberdDamage * atk);
+            npc.damage = (int)(npc.damage * attack);
+            daggerDamage = (int)(daggerDamage * attack);
+            halberdDamage = (int)(halberdDamage * attack);
 
-            npc.defense = (int)(npc.defense * def);
+            npc.defense = (int)(npc.defense * defense);
 
-            normalSpeed = normalSpeed * spd;
-            fastSpeed = fastSpeed * spd;
+            normalSpeed = normalSpeed * speed;
+            fastSpeed = fastSpeed * speed;
         }
 
         // Set up values for charge
@@ -454,6 +461,36 @@ namespace DesertMod.NPCs.Boss
             chargeDirection = direction;
             chargeStartPos = npc.Center;
             currentCharge = 0f;
+        }
+
+        // Shoot single dagger
+        private void ShootDagger(Vector2 direction)
+        {
+            direction.Normalize();
+            Projectile.NewProjectile(npc.Center, direction * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 1f);
+        }
+
+        // Shoot a fan of daggers (count = amount of daggers, spread = angle between two adjacent daggers)
+        private void ShootDaggerFan(Vector2 direction, int count, float spread)
+        {
+            direction.Normalize();
+            float toRad = 1f / 180f * (float)Math.PI;
+            float totalSpread = count * spread;
+            float angle = -totalSpread * 0.5f * toRad;
+            float increment = spread * toRad;
+            for (int i = 0; i < 5; i++)
+            {
+                Vector2 dir = new Vector2(direction.X * (float)Math.Cos(angle + i * increment) - direction.Y * (float)Math.Sin(angle + i * increment),
+                    direction.X * (float)Math.Sin(angle + i * increment) + direction.Y * (float)Math.Cos(angle + i * increment));
+                ShootDagger(dir);
+            }
+        }
+
+        private void Halberd(Vector2 position, bool leftToRight = true)
+        {
+            int pro = Projectile.NewProjectile(position, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 5f);
+            Main.projectile[pro].ai[0] = npc.whoAmI;
+            Main.projectile[pro].ai[1] = leftToRight ? 0f : 1f;
         }
 
         // Move npc towards a target at a certain speed and turn resistance

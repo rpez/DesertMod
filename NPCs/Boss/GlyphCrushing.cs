@@ -40,7 +40,7 @@ namespace DesertMod.NPCs.Boss
                 return;
             }
 
-            if (aiPhase == 0) target = new Vector2(npc.ai[4], npc.ai[5]);
+            if (aiPhase == 0) target = npc.Center;
 
             // Summon walls if they are not active
             if (!wallsActive)
