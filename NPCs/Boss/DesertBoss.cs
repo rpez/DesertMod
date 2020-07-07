@@ -398,21 +398,23 @@ namespace DesertMod.NPCs.Boss
         // npc.ai[i] != 0 means glyph is dead (where i: 0 = petrifying, 1 = crushing, 2 = burning)
         private void CheckGlyphStatus()
         {
-            // Petrifying
+            // Petrifying glyph
             if (!glyphPetrifyingDead && (int)npc.ai[0] != 0)
             {
                 glyphPetrifyingDead = true;
                 glyphPetrifyingActive = false;
                 IncreaseStats(1.0f, 1.5f, 1.0f);
             }
-            // Crushing
+
+            // Crushing glyph
             if (!glyphCrushingDead && (int)npc.ai[1] != 0)
             {
                 glyphCrushingDead = true;
                 glyphCrushingActive = false;
                 IncreaseStats(1.3f, 1.3f, 1.0f);
             }
-            // Burning
+
+            // Burning glyph
             if (!glyphBurningDead && (int)npc.ai[2] != 0)
             {
                 glyphBurningDead = true;
