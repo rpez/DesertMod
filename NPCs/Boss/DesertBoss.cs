@@ -9,7 +9,7 @@ namespace DesertMod.NPCs.Boss
     [AutoloadBossHead]
     public class DesertBoss : ModNPC
     {
-        private enum BossPhase { HEALTHY, DAMAGED, RAGED }
+        private enum BossPhase { HEALTHY, DAMAGED, ENRAGED }
 
         // Updated in code
         private int aiPhase = 0;
@@ -254,11 +254,11 @@ namespace DesertMod.NPCs.Boss
 
             /* ___________________________________________________________________________
              * 
-             * RAGED
+             * ENRAGED
              * Boss HP bar below third
              * ___________________________________________________________________________
             */
-            else if (currentPhase == BossPhase.RAGED)
+            else if (currentPhase == BossPhase.ENRAGED)
             {
 
             }
@@ -430,7 +430,7 @@ namespace DesertMod.NPCs.Boss
         {
             if (npc.life >= npc.lifeMax / 2) currentPhase = BossPhase.HEALTHY;
             else if (npc.life <= npc.lifeMax / 2 && npc.life >= npc.lifeMax / 3) currentPhase = BossPhase.DAMAGED;
-            else currentPhase = BossPhase.RAGED;
+            else currentPhase = BossPhase.ENRAGED;
         }
 
         // Scale boss attack damages, defense and speed
