@@ -141,6 +141,7 @@ namespace DesertMod.NPCs.Boss
                     DeactivateShaders();
                     burnOn = false;
                 }
+                boss.ai[2] = 1;
             }
             return base.CheckDead();
         }

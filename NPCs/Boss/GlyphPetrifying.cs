@@ -68,6 +68,7 @@ namespace DesertMod.NPCs.Boss
             if (npc.life <= 0)
             {
                 DeactivateRay();
+                boss.ai[0] = 1;
             }
             return base.CheckDead();
         }

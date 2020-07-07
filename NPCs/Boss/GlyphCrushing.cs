@@ -61,6 +61,7 @@ namespace DesertMod.NPCs.Boss
             if (npc.life <= 0)
             {
                 DeactivateWalls();
+                boss.ai[1] = 1;
             }
             return base.CheckDead();
         }

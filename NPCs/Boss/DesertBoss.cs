@@ -16,6 +16,7 @@ namespace DesertMod.NPCs.Boss
         // AI
         private int aiPhase = 0;
         private BossPhase currentPhase = BossPhase.HEALTHY;
+        private bool initialize = true;
 
         // Behavior flags
         private bool follow = true;
@@ -100,7 +101,7 @@ namespace DesertMod.NPCs.Boss
             npc.netAlways = true;
 
             // Initialize
-            if (aiPhase == 0)
+            if (initialize)
             {
                 DesertMod.instance.ShowDebugUI();
 
@@ -121,6 +122,8 @@ namespace DesertMod.NPCs.Boss
                 Main.npc[glyphBurning].ai[1] = 0;
                 Main.npc[glyphBurning].ai[2] = 100f;
                 Main.npc[glyphBurning].ai[3] = -100f;
+
+                initialize = false;
             }
 
             // Add "tick" to the phase counter of AI
@@ -175,7 +178,7 @@ namespace DesertMod.NPCs.Boss
                 // Follow target and charge three times
                 if (!goHigh)
                 {
-                    if (aiPhase == 200 || aiPhase == 250 || aiPhase == 300 || aiPhase == 600 || aiPhase == 650 || aiPhase == 700)
+                    if (aiPhase % 50 == 0 && aiPhase % 200 != 0)
                     {
                         InitializeCharge(towardsPlayer);
                     }
@@ -197,7 +200,7 @@ namespace DesertMod.NPCs.Boss
                 }
 
                 // Switch hover to follow
-                if (aiPhase % 1000 == 0)
+                if (aiPhase % 700 == 0)
                 {
                     follow = goHigh;
                     goHigh = !goHigh;
@@ -206,7 +209,7 @@ namespace DesertMod.NPCs.Boss
                 }
 
                 // Toggle petrifying glyph
-                if (aiPhase == 2000)
+                if (aiPhase == 2100)
                 {
                     if (!glyphPetrifyingActive) ToggleGlyph(true, false, false);
                     else ToggleGlyph(false, false, false);
@@ -394,17 +397,17 @@ namespace DesertMod.NPCs.Boss
         // Check glyph states
         private void CheckGlyphStatus()
         {
-            if (!glyphPetrifyingDead && Main.npc[glyphPetrifying].life <= 0)
+            if (!glyphPetrifyingDead && (int)npc.ai[0] != 0)
             {
                 glyphPetrifyingDead = true;
                 glyphPetrifyingActive = false;
             }
-            if (!glyphCrushingDead && Main.npc[glyphCrushing].life <= 0)
+            if (!glyphCrushingDead && (int)npc.ai[1] != 0)
             {
                 glyphCrushingDead = true;
                 glyphCrushingActive = false;
             }
-            if (!glyphBurningDead && Main.npc[glyphBurning].life <= 0)
+            if (!glyphBurningDead && (int)npc.ai[2] != 0)
             {
                 glyphBurningDead = true;
                 glyphBurningActive = false;
