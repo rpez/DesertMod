@@ -15,10 +15,13 @@ namespace DesertMod.NPCs.Boss
         public Player[] players;
         public int[] playerIDs;
 
+        // Values initialized in code
         public NPC boss;
         public Vector2 attachPos;
         public bool isActive = true;
         public bool attached = true;
+
+        // Adjustable variables shared by all glyphs
         public float returnSpeed = 30f;
         public float turnResistance = 10f;
 
@@ -73,9 +76,12 @@ namespace DesertMod.NPCs.Boss
                         if (k >= players.Length) i = Main.player.Length;
                     }
                 }
+
+                // Save player ids to separate array
                 playerIDs = players.Select(player => player.whoAmI).ToArray();
             }
 
+            // npc.ai[1] determines whether glyph should be active
             if ((int)npc.ai[1] == 0)
             {
                 Vector2 targetPos = boss.Center + attachPos;
@@ -95,6 +101,7 @@ namespace DesertMod.NPCs.Boss
                         move *= returnSpeed / length;
                     }
                     npc.velocity = move;
+
                     // TODO: fix workaround
                     if (Vector2.Distance(npc.Center, targetPos) <= 10f) attached = true;
                 }

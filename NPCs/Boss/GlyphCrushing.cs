@@ -9,11 +9,13 @@ namespace DesertMod.NPCs.Boss
 {
     class GlyphCrushing : Glyph
     {
+        // Updated in code
         private int leftWall = -1;
         private int rightWall = -1;
         private Vector2 target;
-
         private bool wallsActive = false;
+
+        // Adjustable variables
         private float wallSpeed = 1f;
         private float wallDistance = 2000f;
 
@@ -56,6 +58,7 @@ namespace DesertMod.NPCs.Boss
             aiPhase++;
         }
 
+        // Pass death flag to boss and kill walls
         public override bool CheckDead()
         {
             if (npc.life <= 0)
@@ -71,6 +74,7 @@ namespace DesertMod.NPCs.Boss
             base.FindFrame(frameHeight);
         }
 
+        // Kill wall projectiles
         private void DeactivateWalls()
         {
             if (leftWall >= 0)

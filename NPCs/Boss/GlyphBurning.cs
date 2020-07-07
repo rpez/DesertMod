@@ -10,8 +10,10 @@ namespace DesertMod.NPCs.Boss
 {
     class GlyphBurning : Glyph
     {
-        // Burn variables
+        // Updated in code
         private bool burnOn = false;
+
+        // Adjustable variables
         private float burnDistance = 2000f;
         private int burnDamage = 10;
         private int burnInterval = 500;
@@ -108,6 +110,7 @@ namespace DesertMod.NPCs.Boss
             filterTimer++;
         }
 
+        // Activate shaders if they are not active and reset timer
         private void ActivateShaders()
         {
             if (!Filters.Scene["GlyphBurningGlow"].IsActive() && !Filters.Scene["GlyphBurningDistort"].IsActive())
@@ -118,6 +121,7 @@ namespace DesertMod.NPCs.Boss
             }
         }
 
+        // Activate shaders if they are active
         private void DeactivateShaders()
         {
             if (Filters.Scene["GlyphBurningGlow"].IsActive() && Filters.Scene["GlyphBurningDistort"].IsActive())
@@ -132,6 +136,7 @@ namespace DesertMod.NPCs.Boss
             base.FindFrame(frameHeight);
         }
 
+        // Pass death flag to boss and disable shaders
         public override bool CheckDead()
         {
             if (npc.life <= 0)

@@ -305,6 +305,7 @@ namespace DesertMod.NPCs.Boss
             }
         }
 
+        // Boss animation
         public override void FindFrame(int frameHeight)
         {
             if (frame == 0)

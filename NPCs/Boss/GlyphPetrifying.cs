@@ -8,13 +8,15 @@ namespace DesertMod.NPCs.Boss
 {
     class GlyphPetrifying : Glyph
     {
+        // Updated in code
         private float rotationAroundBoss = 0;
-        private float distanceFromCenter = 300;
-        private float rotationSpeed = 1;
-
         private int ray = -1;
         private bool shootRay = true;
         private bool rayActive = false;
+
+        // Adjustable variables
+        private float distanceFromCenter = 300;
+        private float rotationSpeed = 1;
 
         public override void SetStaticDefaults()
         {
@@ -63,6 +65,7 @@ namespace DesertMod.NPCs.Boss
             aiPhase++;
         }
 
+        // Pass death flag to boss and kill ray
         public override bool CheckDead()
         {
             if (npc.life <= 0)
@@ -78,6 +81,7 @@ namespace DesertMod.NPCs.Boss
             base.FindFrame(frameHeight);
         }
 
+        // Kill ray projectile
         private void DeactivateRay()
         {
             if (rayActive && ray >= 0)
