@@ -401,19 +401,19 @@ namespace DesertMod.NPCs.Boss
             {
                 glyphPetrifyingDead = true;
                 glyphPetrifyingActive = false;
-                IncreaseStats(1.0f, 1.2f, 1.0f);
+                IncreaseStats(1.0f, 1.5f, 1.0f);
             }
             if (!glyphCrushingDead && (int)npc.ai[1] != 0)
             {
                 glyphCrushingDead = true;
                 glyphCrushingActive = false;
-                IncreaseStats(1.2f, 1.2f, 1.0f);
+                IncreaseStats(1.3f, 1.3f, 1.0f);
             }
             if (!glyphBurningDead && (int)npc.ai[2] != 0)
             {
                 glyphBurningDead = true;
                 glyphBurningActive = false;
-                IncreaseStats(1.2f, 1.2f, 1.5f);
+                IncreaseStats(1.3f, 1.3f, 1.5f);
             }
         }
 
