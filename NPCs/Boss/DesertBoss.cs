@@ -54,7 +54,7 @@ namespace DesertMod.NPCs.Boss
         
         // Attacks
         private int daggerDamage = 100;
-        private float daggerSpeed = 1f;
+        private float daggerSpeed = 20f;
         private int halberdDamage = 300;
 
         public override void SetStaticDefaults()
@@ -354,7 +354,7 @@ namespace DesertMod.NPCs.Boss
             }
             if (goHigh)
             {
-                MoveTowards(npc, target + new Vector2(-hoverDistanceFromPlayer, 0), fastSpeed, 20f);
+                MoveTowards(npc, target + new Vector2(0, -hoverDistanceFromPlayer), fastSpeed, 20f);
             }
         }
 
