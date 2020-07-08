@@ -20,6 +20,7 @@ namespace DesertMod.NPCs.Boss
         public Vector2 attachPos;
         public bool isActive = true;
         public bool attached = true;
+        public bool hover = true;
 
         // Adjustable variables shared by all glyphs
         public float returnSpeed = 30f;
@@ -119,6 +120,8 @@ namespace DesertMod.NPCs.Boss
                 isActive = true;
                 attached = false;
             }
+
+
 
             aiPhase++;
         }

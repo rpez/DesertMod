@@ -60,7 +60,6 @@ namespace DesertMod.NPCs.Boss
             }
 
             rotationAroundBoss += rotationSpeed;
-            aiPhase++;
         }
 
         // Pass death flag to boss and kill ray

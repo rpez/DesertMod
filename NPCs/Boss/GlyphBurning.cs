@@ -103,8 +103,7 @@ namespace DesertMod.NPCs.Boss
                     }
                 }
             }
-            
-            aiPhase++;
+
             filterTimer++;
         }
 

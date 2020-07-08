@@ -250,7 +250,7 @@ namespace DesertMod.NPCs.Boss
                     // Shoot single daggers and fans
                     if (aiPhase % 150 == 0)
                     {
-                        ShootDaggerFan(towardsPlayer, 10, 3f);
+                        ShootDaggerFan(towardsPlayer, 10, 5f);
                     }
                     else if (aiPhase % 50 == 0 || aiPhase % 75 == 0)
                     {
@@ -309,7 +309,7 @@ namespace DesertMod.NPCs.Boss
                     // Shoot single daggers and fans
                     if (aiPhase % 150 == 0)
                     {
-                        ShootDaggerFan(towardsPlayer, 6, 60f);
+                        ShootDaggerFan(towardsPlayer, 24, 15f);
                     }
                     else if (aiPhase % 25 == 0)
                     {
@@ -505,7 +505,7 @@ namespace DesertMod.NPCs.Boss
             currentCharge = 0f;
         }
 
-        // Shoot single dagger
+        // Shoot single dagger to set direction from a position
         private void ShootDagger(Vector2 direction, Vector2 position)
         {
             direction.Normalize();

@@ -50,8 +50,6 @@ namespace DesertMod.NPCs.Boss
 
                 wallsActive = true;
             }
-
-            aiPhase++;
         }
 
         // Pass death flag to boss and kill walls
