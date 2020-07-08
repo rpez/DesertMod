@@ -3,6 +3,7 @@ using Terraria.ModLoader;
 using Terraria.ID;
 using Microsoft.Xna.Framework;
 using System.Linq;
+using System;
 
 namespace DesertMod.NPCs.Boss
 {
@@ -21,6 +22,7 @@ namespace DesertMod.NPCs.Boss
         public bool isActive = true;
         public bool attached = true;
         public bool hover = true;
+        public Vector2 lastHoverVelocity;
 
         // Adjustable variables shared by all glyphs
         public float returnSpeed = 30f;
@@ -85,26 +87,20 @@ namespace DesertMod.NPCs.Boss
             // npc.ai[1] determines whether glyph should be active
             if ((int)npc.ai[1] == 0)
             {
+                hover = false;
                 Vector2 targetPos = boss.Center + attachPos;
                 isActive = false;
                 if (!attached)
                 {
-                    Vector2 move = targetPos - npc.Center;
-                    float length = move.Length();
-                    if (length > returnSpeed)
-                    {
-                        move *= returnSpeed / length;
-                    }
-                    move = (npc.velocity * turnResistance + move) / (turnResistance + 1f);
-                    length = move.Length();
-                    if (length > returnSpeed)
-                    {
-                        move *= returnSpeed / length;
-                    }
-                    npc.velocity = move;
+                    MoveTowards(npc, targetPos, returnSpeed, turnResistance);
 
                     // TODO: fix workaround
-                    if (Vector2.Distance(npc.Center, targetPos) <= 10f) attached = true;
+                    if (Vector2.Distance(npc.Center, targetPos) <= 10f)
+                    {
+                        attached = true;
+                        npc.Center = targetPos;
+                        npc.velocity = Vector2.Zero;
+                    }
                 }
                 else
                 {
@@ -118,12 +114,37 @@ namespace DesertMod.NPCs.Boss
             else
             {
                 isActive = true;
+                hover = true;
                 attached = false;
             }
 
-
+            if (hover)
+            {
+                npc.velocity -= lastHoverVelocity;
+                float vel = (float)Math.Cos(aiPhase / 180f * Math.PI);
+                lastHoverVelocity = new Vector2(Main.rand.NextFloat(-0.3f, 0.3f), vel);
+                npc.velocity += lastHoverVelocity;
+            }
 
             aiPhase++;
+        }
+
+        // Move npc towards a target at a certain speed and turn resistance (KINDA NOT DRY-CODE MABY FIX SOME DAY)
+        public void MoveTowards(NPC npc, Vector2 target, float speed, float turnResistance)
+        {
+            Vector2 move = target - npc.Center;
+            float length = move.Length();
+            if (length > speed)
+            {
+                move *= speed / length;
+            }
+            move = (npc.velocity * turnResistance + move) / (turnResistance + 1f);
+            length = move.Length();
+            if (length > speed)
+            {
+                move *= speed / length;
+            }
+            npc.velocity = move;
         }
     }
 }
