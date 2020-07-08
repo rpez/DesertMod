@@ -517,8 +517,7 @@ namespace DesertMod.NPCs.Boss
         {
             direction.Normalize();
             float toRad = 1f / 180f * (float)Math.PI;
-            float totalSpread = count * spread;
-            if (count % 2 == 0) totalSpread -= spread * 0.5f; // Center even amounts
+            float totalSpread = (count - 1) * spread;
             float angle = -totalSpread * 0.5f * toRad;
             float increment = spread * toRad;
             for (int i = 0; i < count; i++)
