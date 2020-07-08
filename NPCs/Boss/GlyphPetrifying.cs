@@ -29,6 +29,12 @@ namespace DesertMod.NPCs.Boss
 
         public override void AI()
         {
+            if (initialize)
+            {
+                hoverOffset = new Vector2(0, -300f);
+                initialize = false;
+            }
+
             // Run base AI and if not active do not execute glyph specific AI
             base.AI();
             if (!isActive)
@@ -39,10 +45,10 @@ namespace DesertMod.NPCs.Boss
 
             npc.TargetClosest(true);
 
-            double rad = rotationAroundBoss * (Math.PI / 180);
+            //double rad = rotationAroundBoss * (Math.PI / 180);
 
-            npc.position.X = boss.Center.X - (int)(Math.Cos(rad) * distanceFromCenter) - npc.width / 2;
-            npc.position.Y = boss.Center.Y - (int)(Math.Sin(rad) * distanceFromCenter) - npc.height / 2;
+            //npc.position.X = boss.Center.X - (int)(Math.Cos(rad) * distanceFromCenter) - npc.width / 2;
+            //npc.position.Y = boss.Center.Y - (int)(Math.Sin(rad) * distanceFromCenter) - npc.height / 2;
 
             // Shoot ray if it is not active
             if (!rayActive)

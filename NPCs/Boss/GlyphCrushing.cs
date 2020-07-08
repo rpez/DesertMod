@@ -28,6 +28,12 @@ namespace DesertMod.NPCs.Boss
 
         public override void AI()
         {
+            if (initialize)
+            {
+                hoverOffset = new Vector2(0, -200f);
+                initialize = false;
+            }
+
             // Run base AI and if not active do not execute glyph specific AI
             base.AI();
             if (!isActive)

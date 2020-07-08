@@ -23,10 +23,17 @@ namespace DesertMod.NPCs.Boss
         public bool attached = true;
         public bool hover = true;
         public Vector2 lastHoverVelocity;
+        public Vector2 targetHoverPos;
+        public bool targeting = false;
 
         // Adjustable variables shared by all glyphs
         public float returnSpeed = 30f;
+        public float targetingSpeed = 20f;
         public float turnResistance = 10f;
+
+        // Adjust glyph spesificly
+        public Vector2 hoverOffset;
+        public bool initialize = true;
 
         public override void SetDefaults()
         {
@@ -113,12 +120,29 @@ namespace DesertMod.NPCs.Boss
             }
             else
             {
+                if (!isActive)
+                {
+                    npc.TargetClosest();
+                    targetHoverPos = Main.player[npc.target].Center + hoverOffset;
+                    targeting = true;
+                }
                 isActive = true;
-                hover = true;
                 attached = false;
             }
 
-            if (hover)
+            if (targeting)
+            {
+                MoveTowards(npc, targetHoverPos, targetingSpeed, turnResistance);
+
+                // TODO: fix workaround
+                if (Vector2.Distance(npc.Center, targetHoverPos) <= 10f)
+                {
+                    targeting = false;
+                    hover = true;
+                    npc.velocity = Vector2.Zero;
+                }
+            }
+            else if (hover)
             {
                 npc.velocity -= lastHoverVelocity;
                 float vel = (float)Math.Cos(aiPhase / 180f * Math.PI);
