@@ -30,7 +30,7 @@ namespace DesertMod.NPCs.Boss
         {
             if (initialize)
             {
-                hoverOffset = new Vector2(0, -200f);
+                hoverOffset = new Vector2(0, -300f);
                 initialize = false;
             }
 
