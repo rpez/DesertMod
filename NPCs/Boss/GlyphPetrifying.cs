@@ -9,7 +9,6 @@ namespace DesertMod.NPCs.Boss
         // Updated in code
         private float rotationAroundBoss = 0;
         private int ray = -1;
-        private bool shootRay = true;
         private bool rayActive = false;
 
         // Adjustable variables
@@ -54,15 +53,11 @@ namespace DesertMod.NPCs.Boss
             if (!rayActive)
             {
                 Player player = Main.player[npc.target];
-                if (shootRay)
-                {
-                    ray = Projectile.NewProjectile(npc.Center, Vector2.Zero, mod.ProjectileType("DesertBossProjectileFreezeRay"), 0, 0f);
-                    Main.projectile[ray].ai[0] = npc.whoAmI;
-                    Main.projectile[ray].ai[1] = player.whoAmI;
+                ray = Projectile.NewProjectile(npc.Center, Vector2.Zero, mod.ProjectileType("DesertBossProjectileFreezeRay"), 0, 0f);
+                Main.projectile[ray].ai[0] = npc.whoAmI;
+                Main.projectile[ray].ai[1] = player.whoAmI;
                     
-                    shootRay = false;
-                    rayActive = true;
-                }
+                rayActive = true;
             }
 
             rotationAroundBoss += rotationSpeed;
