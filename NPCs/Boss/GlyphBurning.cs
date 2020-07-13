@@ -38,6 +38,7 @@ namespace DesertMod.NPCs.Boss
             base.AI();
             if (!isActive)
             {
+                DeactivateShaders();
                 return;
             }
 

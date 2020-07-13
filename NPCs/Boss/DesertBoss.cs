@@ -396,6 +396,19 @@ namespace DesertMod.NPCs.Boss
             base.BossLoot(ref name, ref potionType);
         }
 
+        // Kill glyphs on boss death
+        public override bool CheckDead()
+        {
+            if (npc.life <= 0)
+            {
+                Main.npc[glyphPetrifying].life = 0;
+                Main.npc[glyphCrushing].life = 0;
+                Main.npc[glyphBurning].life = 0;
+                ToggleGlyph(false, false, false);
+            }
+            return base.CheckDead();
+        }
+
         // Toggles glyphs
         private void ToggleGlyph(bool petrifying, bool crushing, bool burning)
         {

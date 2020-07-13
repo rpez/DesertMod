@@ -139,6 +139,7 @@ namespace DesertMod.NPCs.Boss
                 {
                     targeting = false;
                     hover = true;
+                    lastHoverVelocity = Vector2.Zero;
                     npc.velocity = Vector2.Zero;
                 }
             }
