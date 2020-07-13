@@ -44,7 +44,7 @@ namespace DesertMod.Projectiles.Boss
             
             // Glow and dust trail
             Dust.NewDust(projectile.position, projectile.width, projectile.height, 217,
-                projectile.velocity.X * 0.25f, projectile.velocity.Y * 0.25f, 150, default(Color), 1f);
+                projectile.velocity.X * 0.25f, projectile.velocity.Y * 0.25f, 150, default, 1f);
             Lighting.AddLight(projectile.Center, 0.3f, 1f, 1f);
 
             aiPhase++;
@@ -60,12 +60,14 @@ namespace DesertMod.Projectiles.Boss
             for (int i = 0; i < tailLength; i++)
             {
                 // Parameters
-                Vector2 pos = projectile.Center - dir * 15f * (i + 1);
+                Vector2 origin = new Vector2(texture.Width * 0.5f, texture.Height * 0.5f);
+                // TODO: Fix autistic hard coded piece of garbage held together by duct tape and bubblegum that miraculously works but will probably fail
+                // if anything is changed
+                Vector2 pos = projectile.Center - (dir * 15f * (i + 1) + dir * (projectile.height * 1.5f)) + new Vector2(projectile.width * 0.5f - 4f, 0f);
                 Rectangle? rec = new Rectangle?();
                 float fadeout = 1f / ((float)i + 2f);
                 Color color = new Color(fadeout, fadeout, fadeout, fadeout);
                 float rotation = projectile.rotation;
-                Vector2 origin = new Vector2(texture.Width * 0.5f, texture.Height * 0.5f);
 
                 // Draw sprite
                 ((SpriteBatch)Main.spriteBatch).Draw(texture, pos - Main.screenPosition, rec, color, rotation, origin, 1f, SpriteEffects.None, 0.0f);

@@ -401,9 +401,11 @@ namespace DesertMod.NPCs.Boss
         {
             if (npc.life <= 0)
             {
-                Main.npc[glyphPetrifying].life = 0;
-                Main.npc[glyphCrushing].life = 0;
-                Main.npc[glyphBurning].life = 0;
+                CheckGlyphStatus();
+                if (!glyphPetrifyingDead) Main.npc[glyphPetrifying].life = 0;
+                if (!glyphCrushingDead) Main.npc[glyphCrushing].life = 0;
+                if (!glyphBurningDead) Main.npc[glyphBurning].life = 0;
+                CheckGlyphStatus();
                 ToggleGlyph(false, false, false);
             }
             return base.CheckDead();
