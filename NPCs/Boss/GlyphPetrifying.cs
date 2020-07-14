@@ -7,13 +7,15 @@ namespace DesertMod.NPCs.Boss
     class GlyphPetrifying : Glyph
     {
         // Updated in code
-        private float rotationAroundBoss = 0;
         private int ray = -1;
         private bool rayActive = false;
+        public bool hover = true;
+        public Vector2 lastHoverVelocity;
+        public Vector2 targetHoverPos;
 
-        // Adjustable variables
-        private float distanceFromCenter = 300;
-        private float rotationSpeed = 1;
+        // Adjustable variabless
+        public float targetingSpeed = 3f;
+        public float targetingTurnResistance = 5f;
 
         public override void SetStaticDefaults()
         {
@@ -30,7 +32,7 @@ namespace DesertMod.NPCs.Boss
         {
             if (initialize)
             {
-                hoverOffset = new Vector2(-200f, -300f);
+                hoverOffset = new Vector2(0, -500f);
                 initialize = false;
             }
 
@@ -43,11 +45,16 @@ namespace DesertMod.NPCs.Boss
             }
 
             npc.TargetClosest(true);
+            targetHoverPos = Main.player[npc.target].Center + hoverOffset;
 
-            //double rad = rotationAroundBoss * (Math.PI / 180);
+            MoveTowards(npc, targetHoverPos, targetingSpeed, targetingTurnResistance);
 
-            //npc.position.X = boss.Center.X - (int)(Math.Cos(rad) * distanceFromCenter) - npc.width / 2;
-            //npc.position.Y = boss.Center.Y - (int)(Math.Sin(rad) * distanceFromCenter) - npc.height / 2;
+            if (hover)
+            {
+                float vel = (float)Math.Cos(aiPhase / 180f * Math.PI);
+                lastHoverVelocity = new Vector2(Main.rand.NextFloat(-0.3f, 0.3f), vel);
+                npc.velocity += lastHoverVelocity;
+            }
 
             // Shoot ray if it is not active
             if (!rayActive)
@@ -59,8 +66,6 @@ namespace DesertMod.NPCs.Boss
                     
                 rayActive = true;
             }
-
-            rotationAroundBoss += rotationSpeed;
         }
 
         // Pass death flag to boss and kill ray

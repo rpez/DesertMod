@@ -353,7 +353,8 @@ namespace DesertMod.NPCs.Boss
             }
             if (goHigh)
             {
-                MoveTowards(npc, target + new Vector2(0, -hoverDistanceFromPlayer), fastSpeed, 20f);
+                float offset = target.X > bossCenter.X ? -200f : 200f;
+                MoveTowards(npc, target + new Vector2(offset, -hoverDistanceFromPlayer), fastSpeed, 20f);
             }
         }
 

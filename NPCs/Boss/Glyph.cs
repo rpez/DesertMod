@@ -21,15 +21,10 @@ namespace DesertMod.NPCs.Boss
         public Vector2 attachPos;
         public bool isActive = true;
         public bool attached = true;
-        public bool hover = true;
-        public Vector2 lastHoverVelocity;
-        public Vector2 targetHoverPos;
-        public bool targeting = false;
 
         // Adjustable variables shared by all glyphs
-        public float returnSpeed = 30f;
-        public float targetingSpeed = 20f;
-        public float turnResistance = 10f;
+        public float returnSpeed = 20f;
+        public float returnTurnResistance = 10f;
 
         // Adjust glyph spesificly
         public Vector2 hoverOffset;
@@ -94,12 +89,11 @@ namespace DesertMod.NPCs.Boss
             // npc.ai[1] determines whether glyph should be active
             if ((int)npc.ai[1] == 0)
             {
-                hover = false;
                 Vector2 targetPos = boss.Center + attachPos;
                 isActive = false;
                 if (!attached)
                 {
-                    MoveTowards(npc, targetPos, returnSpeed, turnResistance);
+                    MoveTowards(npc, targetPos, returnSpeed, returnTurnResistance);
 
                     // TODO: fix workaround
                     if (Vector2.Distance(npc.Center, targetPos) <= 10f)
@@ -120,35 +114,8 @@ namespace DesertMod.NPCs.Boss
             }
             else
             {
-                if (!isActive)
-                {
-                    npc.TargetClosest();
-                    targetHoverPos = Main.player[npc.target].Center + hoverOffset;
-                    targeting = true;
-                }
                 isActive = true;
                 attached = false;
-            }
-
-            if (targeting)
-            {
-                MoveTowards(npc, targetHoverPos, targetingSpeed, turnResistance);
-
-                // TODO: fix workaround
-                if (Vector2.Distance(npc.Center, targetHoverPos) <= 10f)
-                {
-                    targeting = false;
-                    hover = true;
-                    lastHoverVelocity = Vector2.Zero;
-                    npc.velocity = Vector2.Zero;
-                }
-            }
-            else if (hover)
-            {
-                npc.velocity -= lastHoverVelocity;
-                float vel = (float)Math.Cos(aiPhase / 180f * Math.PI);
-                lastHoverVelocity = new Vector2(Main.rand.NextFloat(-0.3f, 0.3f), vel);
-                npc.velocity += lastHoverVelocity;
             }
 
             aiPhase++;

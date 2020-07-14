@@ -3,6 +3,7 @@ using Terraria.ID;
 using Microsoft.Xna.Framework;
 using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
+using System;
 
 namespace DesertMod.NPCs.Boss
 {
@@ -10,11 +11,16 @@ namespace DesertMod.NPCs.Boss
     {
         // Updated in code
         private bool burnOn = false;
+        private bool hover = false;
+        private bool move = true;
+        public Vector2 lastHoverVelocity;
 
         // Adjustable variables
         private float burnDistance = 2000f;
         private int burnDamage = 10;
         private int burnInterval = 500;
+        public float targetingSpeed = 2f;
+        public float targetingTurnResistance = 2f;
 
         // Shader timers
         private int filterTimer = 0;
@@ -30,7 +36,7 @@ namespace DesertMod.NPCs.Boss
         {
             if (initialize)
             {
-                hoverOffset = new Vector2(200f, -300f);
+                hoverOffset = new Vector2(0, -200f);
                 initialize = false;
             }
 
@@ -46,11 +52,14 @@ namespace DesertMod.NPCs.Boss
             if (aiPhase % burnInterval == 0)
             {
                 burnOn = !burnOn;
+                move = !burnOn;
+                hover = burnOn;
                 if (Main.netMode != NetmodeID.Server)
                 {
                     // Toggle shaders
                     if (burnOn)
                     {
+                        npc.velocity = Vector2.Zero;
                         ActivateShaders();
                     }
                     else
@@ -109,6 +118,19 @@ namespace DesertMod.NPCs.Boss
                         }
                     }
                 }
+            }
+
+            if (move)
+            {
+                MoveTowards(npc, boss.Center + hoverOffset, targetingSpeed, targetingTurnResistance);
+            }
+
+            if (hover)
+            {
+                npc.velocity -= lastHoverVelocity;
+                float vel = (float)Math.Cos(aiPhase / 180f * Math.PI);
+                lastHoverVelocity = new Vector2(Main.rand.NextFloat(-0.3f, 0.3f), vel * 0.5f);
+                npc.velocity += lastHoverVelocity;
             }
 
             filterTimer++;

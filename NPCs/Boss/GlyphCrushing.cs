@@ -30,7 +30,7 @@ namespace DesertMod.NPCs.Boss
         {
             if (initialize)
             {
-                hoverOffset = new Vector2(0, -300f);
+                hoverOffset = new Vector2(0, 0);
                 initialize = false;
             }
 
@@ -38,21 +38,24 @@ namespace DesertMod.NPCs.Boss
             base.AI();
             if (!isActive)
             {
+                npc.noTileCollide = true;
+                npc.noGravity = true;
                 DeactivateWalls();
                 return;
             }
 
-            if (aiPhase == 0) target = npc.Center;
+            npc.noTileCollide = false;
+            npc.noGravity = false;
 
             // Summon walls if they are not active
             if (!wallsActive)
             {
                 leftWall = Projectile.NewProjectile(npc.Center + new Vector2(-wallDistance, 0f), new Vector2(wallSpeed, 0f), mod.ProjectileType("DesertBossProjectileCrushingWall"), 50, 10f);
-                Main.projectile[leftWall].ai[0] = target.X;
-                Main.projectile[leftWall].ai[1] = target.Y;
+                Main.projectile[leftWall].ai[0] = npc.Center.X;
+                Main.projectile[leftWall].ai[1] = npc.Center.Y;
                 rightWall = Projectile.NewProjectile(npc.Center + new Vector2(wallDistance, 0f), new Vector2(-wallSpeed, 0f), mod.ProjectileType("DesertBossProjectileCrushingWall"), 50, 10f);
-                Main.projectile[rightWall].ai[0] = target.X;
-                Main.projectile[rightWall].ai[1] = target.Y;
+                Main.projectile[rightWall].ai[0] = npc.Center.X;
+                Main.projectile[rightWall].ai[1] = npc.Center.Y;
 
                 wallsActive = true;
             }
