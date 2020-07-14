@@ -26,12 +26,15 @@ float4 GlyphBurningGlow(float2 coords : TEXCOORD0) : COLOR0
     if (!any(color))
         return color;
 
+    float hsp = sqrt(0.299 * color.r * color.r + 0.587 * color.g * color.g + 0.114 * color.b * color.b);
+
     float2 targetCoords = (uTargetPosition - uScreenPosition) / uScreenResolution;
     float2 distVec = (coords - targetCoords) * float2 (uScreenResolution.x / uScreenResolution.y, 1);
     float distance = length(distVec);
 
     float multiplier = uIntensity - distance;
     if (multiplier < 0.0) multiplier = 0.0;
+    if (hsp <= 0.1) multiplier *= 2;
     float oe = 1.0 + multiplier * multiplier * multiplier * 3.0;
 
     return float4 (color.r * oe, color.g * oe, color.b * oe, color.a);
