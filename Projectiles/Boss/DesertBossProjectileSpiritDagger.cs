@@ -10,8 +10,8 @@ namespace DesertMod.Projectiles.Boss
     {
         private int aiPhase = 0;
 
-        // How many ghosting sprites does the trail have
-        private int tailLength = 4;
+        private int tailLength = 4; // How many ghosting sprites does the trail have
+        private float tailSpread = 15f; // How much space between trail parts
 
         public override void SetStaticDefaults()
         {
@@ -63,7 +63,7 @@ namespace DesertMod.Projectiles.Boss
                 Vector2 origin = new Vector2(texture.Width * 0.5f, texture.Height * 0.5f);
                 // TODO: Fix autistic hard coded piece of garbage held together by duct tape and bubblegum that miraculously works but will probably fail
                 // if anything is changed
-                Vector2 pos = projectile.Center - (dir * 15f * (i + 1) + dir * (projectile.height * 1.5f)) + new Vector2(projectile.width * 0.5f - 4f, 0f);
+                Vector2 pos = projectile.Center - dir * (tailSpread * (i + 1) + (projectile.height * 1.5f)) + new Vector2(projectile.width * 0.5f - 4f, 0f);
                 Rectangle? rec = new Rectangle?();
                 float fadeout = 1f / ((float)i + 2f);
                 Color color = new Color(fadeout, fadeout, fadeout, fadeout);
