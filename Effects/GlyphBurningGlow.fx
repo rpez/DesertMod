@@ -34,7 +34,7 @@ float4 GlyphBurningGlow(float2 coords : TEXCOORD0) : COLOR0
 
     float multiplier = uIntensity - distance;
     if (multiplier < 0.0) multiplier = 0.0;
-    if (hsp <= 0.1) multiplier *= 2;
+    if (hsp <= 0.1) multiplier *= 2.0;
     float oe = 1.0 + multiplier * multiplier * multiplier * 3.0;
 
     return float4 (color.r * oe, color.g * oe, color.b * oe, color.a);
