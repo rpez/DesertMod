@@ -84,7 +84,7 @@ namespace DesertMod.NPCs.Boss
             // If burning
             if (burnOn)
             {
-                if (aiPhase % 20 == 0)
+                if (aiPhase % 40 == 0)
                 {
                     Main.PlaySound(SoundID.Item82, npc.Center);
                 }
