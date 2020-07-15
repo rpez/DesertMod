@@ -49,9 +49,9 @@ namespace DesertMod.NPCs.Boss
             npc.noTileCollide = false;
             npc.noGravity = false;
 
-            if (aiPhase % 20 == 0)
+            if (aiPhase % 50 == 0)
             {
-                Main.PlaySound(new LegacySoundStyle(2, 170, SoundType.Sound), npc.Center);
+                Main.PlaySound(SoundID.Item113, npc.Center);
             }
 
             // Summon walls if they are not active

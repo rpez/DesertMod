@@ -79,7 +79,7 @@ namespace DesertMod.NPCs.Boss
             npc.noGravity = true;
             npc.noTileCollide = true;
 
-            npc.HitSound = SoundID.NPCHit54;
+            npc.HitSound = SoundID.Item96;
             npc.DeathSound = SoundID.NPCDeath62;
 
             music = mod.GetSoundSlot(SoundType.Music, "Sounds/Music/DesertBossMusic");

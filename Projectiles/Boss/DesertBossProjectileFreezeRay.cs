@@ -119,7 +119,7 @@ namespace DesertMod.Projectiles.Boss
                     // NOTE: if the pulse width is very big, spawning new wave might seem clunky visually as all of the glowing parts emerge immediately
                     pulsePositions.Add(i);
                 }
-                Main.PlaySound(SoundID.Item42, target.Center);
+                Main.PlaySound(SoundID.Item116, target.Center);
             }
             // Rotate and move ray parts randomly
             for (int i = 0; i < rayPartRotation.Count; i++)
