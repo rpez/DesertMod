@@ -230,15 +230,10 @@ namespace DesertMod.NPCs.Boss
                 if (!goHigh)
                 {
                     // Follow target and charge with halberd occasionally
-                    if (aiPhase % 300 == 0)
+                    if (aiPhase % 50 == 0 && aiPhase % 200 != 0 && aiPhase % 250 != 0)
                     {
+                        Halberd(bossCenter, aiPhase % 100 == 0);
                         InitializeCharge(towardsPlayer);
-                        Halberd(bossCenter, true);
-                    }
-                    if (aiPhase % 350 == 0)
-                    {
-                        InitializeCharge(towardsPlayer);
-                        Halberd(bossCenter, false);
                     }
                     if (!charge)
                     {
@@ -252,7 +247,7 @@ namespace DesertMod.NPCs.Boss
                     {
                         ShootDaggerFan(towardsPlayer, 10, 5f);
                     }
-                    else if (aiPhase % 50 == 0 || aiPhase % 75 == 0)
+                    else if (aiPhase % 50 == 0 || aiPhase % 60 == 0 || aiPhase % 70 == 0)
                     {
                         ShootDagger(towardsPlayer, bossCenter);
                     }
@@ -289,15 +284,10 @@ namespace DesertMod.NPCs.Boss
                 if (!goHigh)
                 {
                     // Follow target and charge with halberd occasionally
-                    if (aiPhase % 300 == 0)
+                    if (aiPhase % 50 == 0 && aiPhase % 200 != 0 && aiPhase % 250 != 0)
                     {
+                        Halberd(bossCenter, aiPhase % 100 == 0);
                         InitializeCharge(towardsPlayer);
-                        Halberd(bossCenter, true);
-                    }
-                    if (aiPhase % 350 == 0)
-                    {
-                        InitializeCharge(towardsPlayer);
-                        Halberd(bossCenter, false);
                     }
                     if (!charge)
                     {
