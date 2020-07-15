@@ -516,7 +516,7 @@ namespace DesertMod.NPCs.Boss
         {
             direction.Normalize();
             Projectile.NewProjectile(position, direction * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 1f);
-            Main.PlaySound(SoundID.Item42, position);
+            Main.PlaySound(SoundID.Item92, position);
         }
 
         // Shoot a fan of daggers (count = amount of daggers, spread = angle between two adjacent daggers)
