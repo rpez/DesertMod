@@ -41,7 +41,7 @@ namespace DesertMod.Items.Boss
 
 		public override bool UseItem(Player player)
 		{
-			Main.PlaySound(SoundID.ForceRoar, player.position);
+			Main.PlaySound(SoundID.Item123, player.position);
 			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
 				NPC.SpawnOnPlayer(player.whoAmI, mod.NPCType("DesertBoss"));
