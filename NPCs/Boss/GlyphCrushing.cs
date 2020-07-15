@@ -1,5 +1,7 @@
 ﻿using Terraria;
+using Terraria.ID;
 using Microsoft.Xna.Framework;
+using Terraria.Audio;
 
 namespace DesertMod.NPCs.Boss
 {
@@ -46,6 +48,11 @@ namespace DesertMod.NPCs.Boss
 
             npc.noTileCollide = false;
             npc.noGravity = false;
+
+            if (aiPhase % 20 == 0)
+            {
+                Main.PlaySound(new LegacySoundStyle(2, 170, SoundType.Sound), npc.Center);
+            }
 
             // Summon walls if they are not active
             if (!wallsActive)

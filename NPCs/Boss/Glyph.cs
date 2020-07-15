@@ -45,8 +45,8 @@ namespace DesertMod.NPCs.Boss
             npc.noGravity = true;
             npc.noTileCollide = true;
 
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath1;
+            npc.HitSound = SoundID.NPCHit53;
+            npc.DeathSound = SoundID.NPCDeath56;
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)

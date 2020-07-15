@@ -84,6 +84,10 @@ namespace DesertMod.NPCs.Boss
             // If burning
             if (burnOn)
             {
+                if (aiPhase % 20 == 0)
+                {
+                    Main.PlaySound(SoundID.Item82, npc.Center);
+                }
                 // Raycast each player and deal dmg if hit
                 foreach (Player player in players)
                 {

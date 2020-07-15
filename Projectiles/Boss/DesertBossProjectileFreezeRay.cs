@@ -110,6 +110,7 @@ namespace DesertMod.Projectiles.Boss
                 {
                     pulsePositions[i]++;
                 }
+                Main.PlaySound(SoundID.Item42, target.Center);
             }
             // Create [pulseWidth] new pulses
             if (aiPhase % pulseFrequency == 0)

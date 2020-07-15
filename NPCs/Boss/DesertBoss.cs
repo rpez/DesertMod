@@ -79,8 +79,8 @@ namespace DesertMod.NPCs.Boss
             npc.noGravity = true;
             npc.noTileCollide = true;
 
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath1;
+            npc.HitSound = SoundID.NPCHit54;
+            npc.DeathSound = SoundID.NPCDeath62;
 
             music = mod.GetSoundSlot(SoundType.Music, "Sounds/Music/DesertBossMusic");
 
@@ -516,6 +516,7 @@ namespace DesertMod.NPCs.Boss
         {
             direction.Normalize();
             Projectile.NewProjectile(position, direction * daggerSpeed, mod.ProjectileType("DesertBossProjectileSpiritDagger"), daggerDamage, 1f);
+            Main.PlaySound(SoundID.Item42, position);
         }
 
         // Shoot a fan of daggers (count = amount of daggers, spread = angle between two adjacent daggers)
@@ -541,6 +542,7 @@ namespace DesertMod.NPCs.Boss
             int pro = Projectile.NewProjectile(position, Vector2.Zero, mod.ProjectileType("DesertBossProjectileHalberd"), halberdDamage, 5f);
             Main.projectile[pro].ai[0] = npc.whoAmI;
             Main.projectile[pro].ai[1] = leftToRight ? 0f : 1f;
+            Main.PlaySound(SoundID.Item113, position);
         }
 
         // Move npc towards a target at a certain speed and turn resistance
